@@ -1,12 +1,23 @@
 package cs496.app.first.cs496_first;
 
+import android.Manifest;
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.ListView;
+import java.util.ArrayList;
 
 
 /**
@@ -18,6 +29,9 @@ import android.view.ViewGroup;
  * create an instance of this fragment.
  */
 public class A extends Fragment {
+    ListView mResult;
+    final int READ_CONTACT_CODE = 0;
+    private static ArrayList<String> arGeneral;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -59,13 +73,76 @@ public class A extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
+    Button button;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_a, container, false);
+        arGeneral = new ArrayList<String>();
+
+        ArrayAdapter<String> Adapter;
+        Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
+        mResult = (ListView)v.findViewById(R.id.result);
+        mResult.setAdapter(Adapter);
+        button = (Button)v.findViewById(R.id.btnread);
+        button.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v)
+            {
+                switch (v.getId())
+                {
+                    case R.id.btnread:
+                        tryOutContact();
+                        break;
+                }
+            }
+        });
         return v;
+    }
+
+    void tryOutContact()
+    {
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
+        {
+            outContact();
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS}, READ_CONTACT_CODE);
+        }
+    }
+
+    @Override
+    public  void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults)
+    {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch (requestCode)
+        {
+            case READ_CONTACT_CODE:
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED)
+                {
+                    outContact();
+                }
+        }
+    }
+
+    void outContact()
+    {
+        ContentResolver cr = getActivity().getApplication().getContentResolver();
+        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+        int nameidx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+
+        while(cursor.moveToNext())
+        {
+            arGeneral.add(cursor.getString(nameidx));
+        }
+        cursor.close();
+
+        ArrayAdapter<String> Adapter;
+        Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
+        mResult = (ListView)getView().findViewById(R.id.result);
+        mResult.setAdapter(Adapter);
     }
 
     // TODO: Rename method, update argument and hook method into UI event
