@@ -6,9 +6,11 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
@@ -51,7 +53,7 @@ public class B extends Fragment {
             R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
     };*/
     GridView gridView;
-
+    DisplayMetrics dm;
     public B() {
         // Required empty public constructor
     }
@@ -89,6 +91,8 @@ public class B extends Fragment {
         View v = inflater.inflate(R.layout.fragment_b, container, false);
         gridView = (GridView) v.findViewById(R.id.gridview);
         gridView.setAdapter(new ImageAdapter(this.getContext()));
+        dm = new DisplayMetrics();
+        ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
         return v;
     }
 
@@ -152,7 +156,7 @@ public class B extends Fragment {
             ImageView imageView;
             if(convertView == null){
                 imageView = new ImageView(mContext);
-                int width = parent.getWidth();
+                int width = dm.widthPixels;
                 imageView.setLayoutParams(new GridView.LayoutParams(width/3, width/3));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setPadding(10, 10, 10, 10);
