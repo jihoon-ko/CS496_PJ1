@@ -31,6 +31,7 @@ import java.util.ArrayList;
 public class A extends Fragment {
     ListView mResult;
     final int READ_CONTACT_CODE = 0;
+    int flag = 1;
     private static ArrayList<String> arGeneral;
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -80,7 +81,6 @@ public class A extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_a, container, false);
         arGeneral = new ArrayList<String>();
-
         ArrayAdapter<String> Adapter;
         Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
         mResult = (ListView)v.findViewById(R.id.result);
@@ -93,8 +93,16 @@ public class A extends Fragment {
                 switch (v.getId())
                 {
                     case R.id.btnread:
-                        tryOutContact();
-                        break;
+                        if(flag == 1)
+                        {
+                            tryOutContact();
+                            flag = 0;
+                            break;
+                        }
+                        else
+                        {
+                            break;
+                        }
                 }
             }
         });
