@@ -118,68 +118,105 @@ public class CanvasView extends View
         }
     }
     @Override
-    public boolean onTouchEvent(MotionEvent event){
-        if(youwin) return true;
-        if(event.getAction() == MotionEvent.ACTION_DOWN){
-            int x = (int)event.getX();
-            int y = (int)event.getY();
+    public boolean onTouchEvent(MotionEvent event) {
+        if (youwin) return true;
+        if (event.getAction() == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
             xx = x;
             yy = y;
         }
-        if(event.getAction() == MotionEvent.ACTION_UP){
-            int x = (int)event.getX();
-            int y = (int)event.getY();
-            if(xx != -1 && yy != -1) {
+        if (event.getAction() == MotionEvent.ACTION_UP) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
+            if (xx != -1 && yy != -1) {
                 //System.out.println("UP: "+x+" "+y);
                 if (Math.abs(xx - x) > Math.abs(yy - y)) {
                     // left or right
-                    if (xx - x > getWidth() * 0.1) {
-                        Toast toast = Toast.makeText(cxt, "Move left", Toast.LENGTH_SHORT);
-                        toast.show();
+                    if (xx - x > getWidth() * 0.15) {
                         //System.out.println("LEFT");
-                        if(zero[1] != 2){
+                        if (zero[1] != 2) {
                             zero[1] += 1;
-                            coor[where[zero[0]][zero[1]]][0] = (float)((zero[1]-1) / 3.0);
-                            where[zero[0]][zero[1]-1] = where[zero[0]][zero[1]];
+                            coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] - 1) / 3.0);
+                            where[zero[0]][zero[1] - 1] = where[zero[0]][zero[1]];
                             moveCnt += 1;
                         }
-                    } else if (xx - x < getWidth() * -0.1) {
-                        Toast toast = Toast.makeText(cxt, "Move right", Toast.LENGTH_SHORT);
-                        toast.show();
+                    } else if (xx - x < getWidth() * -0.15) {
                         //System.out.println("RIGHT");
-                        if(zero[1] != 0){
+                        if (zero[1] != 0) {
                             zero[1] -= 1;
-                            coor[where[zero[0]][zero[1]]][0] = (float)((zero[1]+1) / 3.0);
-                            where[zero[0]][zero[1]+1] = where[zero[0]][zero[1]];
+                            coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] + 1) / 3.0);
+                            where[zero[0]][zero[1] + 1] = where[zero[0]][zero[1]];
                             moveCnt += 1;
                         }
                     }
                 } else {
-                    // up or down
-                    if (yy - y > getWidth() * 0.1) {
-                        Toast toast = Toast.makeText(cxt, "Move up", Toast.LENGTH_SHORT);
-                        toast.show();
+                    if (yy - y > getWidth() * 0.15) {
                         //System.out.println("UP");
-                        if(zero[0] != 2){
+                        if (zero[0] != 2) {
                             zero[0] += 1;
-                            coor[where[zero[0]][zero[1]]][1] = (float)((zero[0]-1) / 3.0);
-                            where[zero[0]-1][zero[1]] = where[zero[0]][zero[1]];
+                            coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] - 1) / 3.0);
+                            where[zero[0] - 1][zero[1]] = where[zero[0]][zero[1]];
                             moveCnt += 1;
                         }
-                    } else if (yy - y < getWidth() * -0.1) {
-                        Toast toast = Toast.makeText(cxt, "Move down", Toast.LENGTH_SHORT);
-                        toast.show();
+                    } else if (yy - y < getWidth() * -0.15) {
                         //System.out.println("DOWN");
-                        if(zero[0] != 0){
+                        if (zero[0] != 0) {
                             zero[0] -= 1;
-                            coor[where[zero[0]][zero[1]]][1] = (float)((zero[0]+1) / 3.0);
-                            where[zero[0]+1][zero[1]] = where[zero[0]][zero[1]];
+                            coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] + 1) / 3.0);
+                            where[zero[0] + 1][zero[1]] = where[zero[0]][zero[1]];
                             moveCnt += 1;
                         }
                     }
                 }
+                for(int i=0;i<3;i++){
+                    for(int j=0;j<3;j++){
+                        if(i == zero[0] && j == zero[1]) continue;
+                        coor[where[i][j]][0] = (float)(j / 3.0);
+                        coor[where[i][j]][1] = (float)(i / 3.0);
+                    }
+                }
             }
-            xx = -1; yy = -1;
+            xx = -1;
+            yy = -1;
+            invalidate();
+        }
+        if(event.getAction() == MotionEvent.ACTION_MOVE){
+            int x = (int)event.getX();
+            int y = (int)event.getY();
+            int width = getWidth();
+            for(int i=0;i<3;i++){
+                for(int j=0;j<3;j++){
+                    if(i == zero[0] && j == zero[1]) continue;
+                    coor[where[i][j]][0] = (float)(j / 3.0);
+                    coor[where[i][j]][1] = (float)(i / 3.0);
+                }
+            }
+            if(xx != -1 && yy != -1) {
+                if (Math.abs(xx - x) > Math.abs(yy - y)) {
+                    if (xx - x > 0) {
+                        //System.out.println("LEFT");
+                        if(zero[1] != 2){
+                            coor[where[zero[0]][zero[1]+1]][0] = (float)((zero[1]+1) / 3.0) - (Math.min(((float)(xx-x) / (float)(width * 0.3)), (float)1.0) / (float)3.0);
+                        }
+                    } else if (xx - x < 0) {
+                        //System.out.println("RIGHT");
+                        if(zero[1] != 0){
+                            coor[where[zero[0]][zero[1]-1]][0] = (float)((zero[1]-1) / 3.0) + (Math.min(((float)(x-xx) / (float)(width * 0.3)), (float)1.0) / (float)3.0);
+                        }
+                    }
+                } else {
+                    if (yy - y > 0) {
+                        if(zero[0] != 2){
+                            coor[where[zero[0]+1][zero[1]]][1] = (float)((zero[0]+1) / 3.0) - (Math.min(((float)(yy-y) / (float)(width * 0.3)), (float)1.0) / (float)3.0);
+                        }
+                    } else if (yy - y < 0) {
+                        if(zero[0] != 0){
+                            coor[where[zero[0]-1][zero[1]]][1] = (float)((zero[0]-1) / 3.0) + (Math.min(((float)(y-yy) / (float)(width * 0.3)), (float)1.0) / (float)3.0);
+                        }
+                    }
+                }
+            }
             invalidate();
         }
         return true;
