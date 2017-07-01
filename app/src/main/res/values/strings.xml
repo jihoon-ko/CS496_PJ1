@@ -3,4 +3,10 @@
     <string name="tab1_str">TAB A</string>
     <string name="tab2_str">TAB B</string>
     <string name="tab3_str">TAB C</string>
+    <string name="tab4_str">TAB D</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment_a">Hello AA</string>
+    <string name="hello_blank_fragment_b">Hello BB</string>
+    <string name="hello_blank_fragment_c">Hello CC</string>
 </resources>
