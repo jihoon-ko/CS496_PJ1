@@ -2,6 +2,7 @@ package cs496.app.first.cs496_first;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -93,6 +94,14 @@ public class B extends Fragment {
         gridView.setAdapter(new ImageAdapter(this.getContext()));
         dm = new DisplayMetrics();
         ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ImageviewActivity.class);
+                intent.putExtra("imageSelected", img[position]);
+                startActivity(intent);
+            }
+        });
         return v;
     }
 
