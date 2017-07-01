@@ -32,7 +32,11 @@ public class A extends Fragment {
     ListView mResult;
     final int READ_CONTACT_CODE = 0;
     int flag = 1;
-    private static ArrayList<String> arGeneral;
+    int flag2 = 1;
+    static int flag3 = 1;
+    ArrayAdapter<String> Adapter;
+    public static ArrayList<String> arGeneral = new ArrayList<String>();
+
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
@@ -80,11 +84,12 @@ public class A extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_a, container, false);
-        arGeneral = new ArrayList<String>();
-        ArrayAdapter<String> Adapter;
-        Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
-        mResult = (ListView)v.findViewById(R.id.result);
-        mResult.setAdapter(Adapter);
+        if(flag2 == 0)
+        {
+            Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
+            mResult = (ListView)v.findViewById(R.id.result);
+            mResult.setAdapter(Adapter);
+        }
         button = (Button)v.findViewById(R.id.btnread);
         button.setOnClickListener(new View.OnClickListener(){
             @Override
@@ -93,14 +98,11 @@ public class A extends Fragment {
                 switch (v.getId())
                 {
                     case R.id.btnread:
-                        if(flag == 1)
+                        if(flag == 1 && flag2 == 1)
                         {
                             tryOutContact();
                             flag = 0;
-                            break;
-                        }
-                        else
-                        {
+                            flag2 = 0;
                             break;
                         }
                 }
@@ -137,17 +139,20 @@ public class A extends Fragment {
 
     void outContact()
     {
-        ContentResolver cr = getActivity().getApplication().getContentResolver();
-        Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-        int nameidx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
-
-        while(cursor.moveToNext())
+        if(flag3 == 1)
         {
-            arGeneral.add(cursor.getString(nameidx));
-        }
-        cursor.close();
+            ContentResolver cr = getActivity().getApplication().getContentResolver();
+            Cursor cursor = cr.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+            int nameidx = cursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
 
-        ArrayAdapter<String> Adapter;
+            while(cursor.moveToNext())
+            {
+                arGeneral.add(cursor.getString(nameidx));
+            }
+            cursor.close();
+            flag3 = 0;
+        }
+
         Adapter = new ArrayAdapter<String>(getActivity(), android.R.layout.simple_list_item_1, arGeneral);
         mResult = (ListView)getView().findViewById(R.id.result);
         mResult.setAdapter(Adapter);
