@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">CS496_first</string>
+    <string name="tab1_str">TAB A</string>
+    <string name="tab2_str">TAB B</string>
+    <string name="tab3_str">TAB C</string>
+</resources>
