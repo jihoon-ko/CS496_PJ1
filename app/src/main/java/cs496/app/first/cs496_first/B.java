@@ -1,12 +1,19 @@
 package cs496.app.first.cs496_first;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.Toast;
 
 
 /**
@@ -28,6 +35,22 @@ public class B extends Fragment {
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+    private Integer[] img = {
+            R.drawable.style_1_1, R.drawable.style_1_2,  R.drawable.style_1_3,
+            R.drawable.style_1_4, R.drawable.style_1_5,  R.drawable.style_1_6,
+            R.drawable.style_1_7, R.drawable.style_1_8,  R.drawable.style_1_9,
+            R.drawable.style_2_1, R.drawable.style_2_2,  R.drawable.style_2_3,
+            R.drawable.style_2_4, R.drawable.style_2_5,  R.drawable.style_2_6,
+            R.drawable.style_2_7, R.drawable.style_2_8,  R.drawable.style_2_9,
+            R.drawable.style_3_1, R.drawable.style_3_2};
+/*  R.drawable.style_3_3,
+            R.drawable.style_3_4, R.drawable.style_3_5,  R.drawable.style_3_6,
+            R.drawable.style_3_7, R.drawable.style_3_8,  R.drawable.style_3_9,
+            R.drawable.style_4_1, R.drawable.style_4_2,  R.drawable.style_4_3,
+            R.drawable.style_4_4, R.drawable.style_4_5,  R.drawable.style_4_6,
+            R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
+    };*/
+    GridView gridView;
 
     public B() {
         // Required empty public constructor
@@ -59,12 +82,13 @@ public class B extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_b, container, false);
+        gridView = (GridView) v.findViewById(R.id.gridview);
+        gridView.setAdapter(new ImageAdapter(this.getContext()));
         return v;
     }
 
@@ -108,4 +132,35 @@ public class B extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+
+    public class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+
+        public ImageAdapter(Context c) {
+            mContext = c;
+        }
+        public final int getCount(){
+            return img.length;
+        }
+        public Object getItem(int position){
+            return img[position];
+        }
+        public long getItemId(int position){
+            return position;
+        }
+        public View getView(int position, View convertView, ViewGroup parent){
+            ImageView imageView;
+            if(convertView == null){
+                imageView = new ImageView(mContext);
+                int width = parent.getWidth();
+                imageView.setLayoutParams(new GridView.LayoutParams(width/3, width/3));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setPadding(10, 10, 10, 10);
+            }else{
+                imageView = (ImageView) convertView;
+            }
+            imageView.setImageResource(img[position]);
+            return imageView;
+        }
+    };
 }
