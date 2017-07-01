@@ -17,6 +17,7 @@ import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SeekBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -57,6 +58,7 @@ public class B extends Fragment {
     GridView gridView;
     SeekBar seekBar;
     DisplayMetrics dm;
+    TextView szText;
     int one_row = 3;
     public B() {
         // Required empty public constructor
@@ -95,6 +97,7 @@ public class B extends Fragment {
         View v = inflater.inflate(R.layout.fragment_b, container, false);
         gridView = (GridView) v.findViewById(R.id.gridview);
         seekBar = (SeekBar) v.findViewById(R.id.seekbar);
+        szText = (TextView) v.findViewById(R.id.sztext);
         gridView.setAdapter(new ImageAdapter(this.getContext()));
         dm = new DisplayMetrics();
         ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
@@ -113,6 +116,7 @@ public class B extends Fragment {
                 gridView.setNumColumns(one_row);
                 gridView.invalidateViews();
                 gridView.postInvalidate();
+                szText.setText(String.valueOf(one_row));
             }
 
             @Override
