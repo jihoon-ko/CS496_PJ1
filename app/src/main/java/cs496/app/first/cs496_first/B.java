@@ -2,6 +2,7 @@ package cs496.app.first.cs496_first;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -15,6 +16,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.Toast;
 
 
@@ -53,7 +55,9 @@ public class B extends Fragment {
             R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
     };*/
     GridView gridView;
+    SeekBar seekBar;
     DisplayMetrics dm;
+    int one_row = 3;
     public B() {
         // Required empty public constructor
     }
@@ -90,9 +94,37 @@ public class B extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_b, container, false);
         gridView = (GridView) v.findViewById(R.id.gridview);
+        seekBar = (SeekBar) v.findViewById(R.id.seekbar);
         gridView.setAdapter(new ImageAdapter(this.getContext()));
         dm = new DisplayMetrics();
         ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ImageviewActivity.class);
+                intent.putExtra("imageSelected", img[position]);
+                startActivity(intent);
+            }
+        });
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                one_row = progress + 1;
+                gridView.setNumColumns(one_row);
+                gridView.invalidateViews();
+                gridView.postInvalidate();
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
         return v;
     }
 
@@ -154,14 +186,17 @@ public class B extends Fragment {
         }
         public View getView(int position, View convertView, ViewGroup parent){
             ImageView imageView;
+            int width = dm.widthPixels;
             if(convertView == null){
                 imageView = new ImageView(mContext);
-                int width = dm.widthPixels;
-                imageView.setLayoutParams(new GridView.LayoutParams(width/3, width/3));
+                imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setPadding(10, 10, 10, 10);
             }else{
                 imageView = (ImageView) convertView;
+                imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
+                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+                imageView.setPadding(10, 10, 10, 10);
             }
             imageView.setImageResource(img[position]);
             return imageView;
