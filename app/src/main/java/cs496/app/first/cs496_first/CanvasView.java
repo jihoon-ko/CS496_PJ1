@@ -371,21 +371,23 @@ public class CanvasView extends View {
         });
         va.start();
 
-
+        final Timer timer = new Timer(true);
         TimerTask timertask = new TimerTask() {
             @Override
             public void run(){
-                simulating = false;
+                if(recent == chueck[now_perm]){
+                    simulating = false;
+                    timer.cancel();
+                }
             }
         };
-        Timer timer = new Timer();
-        timer.schedule(timertask, 1000 * chueck[now_perm] + 50);
+        timer.schedule(timertask, 1000, 500);
 
     }
 
     public void shuffle(){
-        if(simulating) return;
         invalidate();
+        if(simulating) return;
         int[] place = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         su[0] = "1";su[1] = "2";su[2] = "3";su[3] = "4";su[4] = "5";su[5] = "6";su[6] = "7";su[7] = "8";
         while(true) {
