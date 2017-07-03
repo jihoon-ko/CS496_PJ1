@@ -381,7 +381,7 @@ public class CanvasView extends View {
                 }
             }
         };
-        timer.schedule(timertask, 1000, 500);
+        timer.schedule(timertask, 0, 100);
 
     }
 
