@@ -1,5 +1,6 @@
 package cs496.app.first.cs496_first;
 
+import java.util.Arrays;
 import android.support.v7.app.AppCompatActivity;
 import android.Manifest;
 import android.content.ContentResolver;
@@ -24,7 +25,7 @@ import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
-
+import java.util.Collections;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -34,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 
 
@@ -112,6 +114,15 @@ class ItemsAdapter extends BaseAdapter
         return convertView;
     }
 
+
+}
+
+class Ascending implements Comparator<Items> {
+
+    @Override
+    public int compare(Items o1, Items o2) {
+        return o1.name.compareTo(o2.name);
+    }
 
 }
 
@@ -255,6 +266,8 @@ public class A2 extends Fragment {
             System.out.println("#");
             e.printStackTrace();
         }
+        Ascending ascending = new Ascending();
+        Collections.sort(sPhoneList, ascending);
 
         Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList);
         mResult.setAdapter(Adapter);
