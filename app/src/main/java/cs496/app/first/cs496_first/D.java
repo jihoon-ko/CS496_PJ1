@@ -7,6 +7,9 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
 
 /**
@@ -17,17 +20,56 @@ import android.view.ViewGroup;
  * Use the {@link D#newInstance} factory method to
  * create an instance of this fragment.
  */
+
+class viewofeach
+{
+
+}
+
+class Champion
+{
+    int x;
+    int y;
+    int hp;
+    int mp;
+    int level;
+    int exp;
+    Champion()
+    {
+        hp = 30;
+        mp = 30;
+        level = 1;
+        exp = 0;
+        x = 5;
+        y = 5;
+    }
+}
+
 public class D extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-
+    int[][] map = new int[10][10];
+    int[] flag = {1,0};
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
+
+    int mov = 0;
+    int sta = 0;
+    int ite = 0;
+    int ski = 0;
+
+    int nor = 0;
+    int wes = 0;
+    int eas = 0;
+    int sou = 0;
+
+    int next = 0;
+
 
     public D() {
         // Required empty public constructor
@@ -64,8 +106,93 @@ public class D extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View v = inflater.inflate(R.layout.fragment_d, container, false);
+        final View v = inflater.inflate(R.layout.fragment_d, container, false);
+        final Champion champion = new Champion();
+
+        textSetting1(champion,flag,v);
         return v;
+    }
+
+    public void textSetting1(final Champion champion, final int[] flag, final View v)
+    {
+        TextView script = (TextView)v.findViewById(R.id.states);
+        TextView action1 = (TextView)v.findViewById(R.id.action1);
+        TextView action2 = (TextView)v.findViewById(R.id.action2);
+        TextView action3 = (TextView)v.findViewById(R.id.action3);
+        TextView action4 = (TextView)v.findViewById(R.id.action4);
+
+        Button button1 = (Button)v.findViewById(R.id.btn1);
+        Button button2 = (Button)v.findViewById(R.id.btn2);
+        Button button3 = (Button)v.findViewById(R.id.btn3);
+        Button button4 = (Button)v.findViewById(R.id.btn4);
+
+        if(flag[0] == 1)
+        {
+            flag[0] = 0;
+            script.setText(R.string.action);
+            action1.setText(R.string.move);
+            action2.setText(R.string.state);
+            action3.setText(R.string.item);
+            action4.setText(R.string.skill);
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    textSetting2(champion,flag,v);
+                }
+            });
+        }
+    }
+
+    public void textSetting2(final Champion champion, final int[] flag, final View v)
+    {
+        TextView script = (TextView)v.findViewById(R.id.states);
+        TextView action1 = (TextView)v.findViewById(R.id.action1);
+        TextView action2 = (TextView)v.findViewById(R.id.action2);
+        TextView action3 = (TextView)v.findViewById(R.id.action3);
+        TextView action4 = (TextView)v.findViewById(R.id.action4);
+
+        Button button1 = (Button)v.findViewById(R.id.btn1);
+        Button button2 = (Button)v.findViewById(R.id.btn2);
+        Button button3 = (Button)v.findViewById(R.id.btn3);
+        Button button4 = (Button)v.findViewById(R.id.btn4);
+
+        if(flag[0] == 0)
+        {
+            flag[0] = 1;
+            script.setText(R.string.direction);
+            action1.setText(R.string.north);
+            action2.setText(R.string.west);
+            action3.setText(R.string.east);
+            action4.setText(R.string.south);
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    champion.y--;
+                    textSetting1(champion,flag,v);
+                }
+            });
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    champion.x--;
+                    textSetting1(champion,flag,v);
+                }
+            });
+            button3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    champion.x++;
+                    textSetting1(champion,flag,v);
+                }
+            });
+            button4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    champion.y++;
+                    textSetting1(champion,flag,v);
+                }
+            });
+        }
     }
 
     // TODO: Rename method, update argument and hook method into UI event
