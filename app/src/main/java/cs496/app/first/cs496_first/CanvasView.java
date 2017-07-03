@@ -23,22 +23,22 @@ public class CanvasView extends View
     private int moveCnt = 0;
     private int xx = -1;
     private int yy = -1;
-    private Context cxt;
+    //private Context cxt;
     private boolean youwin = false;
 
     public CanvasView(Context c){
         super(c);
-        cxt = c;
+        //cxt = c;
         initView();
     }
     public CanvasView(Context c, AttributeSet attrs){
         super(c, attrs);
-        cxt = c;
+        //cxt = c;
         initView();
     }
     public CanvasView(Context c, AttributeSet attrs, int defStyle){
         super(c, attrs, defStyle);
-        cxt = c;
+        //cxt = c;
         initView();
     }
     protected void initView(){
