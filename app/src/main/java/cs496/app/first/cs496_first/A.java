@@ -11,16 +11,21 @@ import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
+import android.widget.TextView;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.w3c.dom.Text;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,6 +42,7 @@ import java.util.HashMap;
  * Use the {@link A#newInstance} factory method to
  * create an instance of this fragment.
  */
+
 public class A extends Fragment {
     ListView mResult;
     final int READ_CONTACT_CODE = 0;
@@ -95,30 +101,17 @@ public class A extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_a, container, false);
+        mResult = (ListView)v.findViewById(R.id.result);
         if(flag2 == 0)
         {
             Adapter = new SimpleAdapter(getActivity(), sPhoneList ,android.R.layout.simple_list_item_2, new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2});
-            mResult = (ListView)v.findViewById(R.id.result);
             mResult.setAdapter(Adapter);
         }
-        button = (Button)v.findViewById(R.id.btnread);
-        button.setOnClickListener(new View.OnClickListener(){
-            @Override
-            public void onClick(View v)
-            {
-                switch (v.getId())
-                {
-                    case R.id.btnread:
-                        if(flag == 1 && flag2 == 1)
-                        {
-                            tryOutContact();
-                            flag = 0;
-                            flag2 = 0;
-                            break;
-                        }
-                }
-            }
-        });
+        else
+        {
+            tryOutContact();
+            flag2 = 0;
+        }
         return v;
     }
 
@@ -168,7 +161,7 @@ public class A extends Fragment {
             sPhoneList.add(singleMap);
         }
 
-        /*try {
+        try {
             InputStream stream = getActivity().getAssets().open("test.json");
             byte[] buf = new byte[stream.available()];
             stream.read(buf); stream.close();
@@ -192,10 +185,9 @@ public class A extends Fragment {
         }catch(JSONException e){
             System.out.println("#");
             e.printStackTrace();
-        }*/
+        }
 
         Adapter = new SimpleAdapter(getActivity(), sPhoneList ,android.R.layout.simple_list_item_2, new String[]{"name", "phone"}, new int[]{android.R.id.text1, android.R.id.text2});
-        mResult = (ListView)getView().findViewById(R.id.result);
         mResult.setAdapter(Adapter);
     }
 
