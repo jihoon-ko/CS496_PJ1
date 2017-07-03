@@ -93,10 +93,87 @@ public class CanvasView extends View {
         initView();
     }
 
+    public boolean swapFunc(int xx, int yy, int wanted){
+        int tmp;
+        boolean ans;
+        tmp = suu[xx]; suu[xx] = suu[yy]; suu[yy] = tmp;
+        ans = (chueck[getPerm()] == wanted);
+        System.out.println(chueck[getPerm()]);
+        tmp = suu[xx]; suu[xx] = suu[yy]; suu[yy] = tmp;
+        return ans;
+    }
+    public void moveLeft(){
+        zero[1] += 1;
+        coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] - 1) / 3.0);
+        where[zero[0]][zero[1] - 1] = where[zero[0]][zero[1]];
+        moveCnt += 1;
+    }
+    public void moveRight(){
+        zero[1] -= 1;
+        coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] + 1) / 3.0);
+        where[zero[0]][zero[1] + 1] = where[zero[0]][zero[1]];
+        moveCnt += 1;
+    }
+    public void moveUp(){
+        zero[0] += 1;
+        coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] - 1) / 3.0);
+        where[zero[0] - 1][zero[1]] = where[zero[0]][zero[1]];
+        moveCnt += 1;
+    }
+    public void moveDown() {
+        zero[0] -= 1;
+        coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] + 1) / 3.0);
+        where[zero[0] + 1][zero[1]] = where[zero[0]][zero[1]];
+        moveCnt += 1;
+    }
+
     public void showAns() {
         if(youwin) return;
         for(int i=0;i<9;i++){
-            
+            suu[i] = (where[i/3][i%3]+1)%9;
+        }
+        int zzero = zero[0]*3+zero[1];
+        suu[zzero] = 0;
+        System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
+        System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
+        System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
+        int now_perm = getPerm();
+        System.out.println("NOW: "+chueck[now_perm]);
+        if(zero[0] > 0){
+            System.out.print("DOWN: ");
+            if(swapFunc(zzero, zzero-3, chueck[now_perm]-1)){
+                // DOWN
+                moveDown();
+                invalidate();
+                return;
+            }
+        }
+        if(zero[0] < 2){
+            System.out.print("UP: ");
+            if(swapFunc(zzero, zzero+3, chueck[now_perm]-1)){
+                // UP
+                moveUp();
+                invalidate();
+                return;
+            }
+        }
+        if(zero[1] > 0){
+            System.out.print("RIGHT: ");
+            if(swapFunc(zzero, zzero-1, chueck[now_perm]-1)){
+                // RIGHT
+                moveRight();
+                invalidate();
+                return;
+            }
+        }
+        if(zero[1] < 2){
+            System.out.print("LEFT: ");
+            if(swapFunc(zzero, zzero+1, chueck[now_perm]-1)){
+                // LEFT
+                moveLeft();
+                invalidate();
+                return;
+            }
         }
     }
 
@@ -209,36 +286,24 @@ public class CanvasView extends View {
                     if (xx - x > getWidth() * 0.15) {
                         //System.out.println("LEFT");
                         if (zero[1] != 2) {
-                            zero[1] += 1;
-                            coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] - 1) / 3.0);
-                            where[zero[0]][zero[1] - 1] = where[zero[0]][zero[1]];
-                            moveCnt += 1;
+                            moveLeft();
                         }
                     } else if (xx - x < getWidth() * -0.15) {
                         //System.out.println("RIGHT");
                         if (zero[1] != 0) {
-                            zero[1] -= 1;
-                            coor[where[zero[0]][zero[1]]][0] = (float) ((zero[1] + 1) / 3.0);
-                            where[zero[0]][zero[1] + 1] = where[zero[0]][zero[1]];
-                            moveCnt += 1;
+                            moveRight();
                         }
                     }
                 } else {
                     if (yy - y > getWidth() * 0.15) {
                         //System.out.println("UP");
                         if (zero[0] != 2) {
-                            zero[0] += 1;
-                            coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] - 1) / 3.0);
-                            where[zero[0] - 1][zero[1]] = where[zero[0]][zero[1]];
-                            moveCnt += 1;
+                            moveUp();
                         }
                     } else if (yy - y < getWidth() * -0.15) {
                         //System.out.println("DOWN");
                         if (zero[0] != 0) {
-                            zero[0] -= 1;
-                            coor[where[zero[0]][zero[1]]][1] = (float) ((zero[0] + 1) / 3.0);
-                            where[zero[0] + 1][zero[1]] = where[zero[0]][zero[1]];
-                            moveCnt += 1;
+                            moveDown();
                         }
                     }
                 }

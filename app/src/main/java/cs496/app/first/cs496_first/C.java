@@ -147,6 +147,12 @@ public class C extends Fragment {
             cv.shuffle();
         }
     };
+    Button.OnClickListener mClickListenerAns = new View.OnClickListener() {
+        public void onClick(View v){
+            CanvasView cv = (CanvasView) getView().findViewById(R.id.myCanvas);
+            cv.showAns();
+        }
+    };
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -163,8 +169,8 @@ public class C extends Fragment {
         View v = inflater.inflate(R.layout.fragment_c, container, false);
         Button cvButton = (Button) v.findViewById(R.id.canvas_button);
         cvButton.setOnClickListener(mClickListener);
-
-        CanvasView cv = (CanvasView) v.findViewById(R.id.myCanvas);
+        Button cvButtonAns = (Button) v.findViewById(R.id.canvas_answer);
+        cvButtonAns.setOnClickListener(mClickListenerAns);
         return v;
     }
     // TODO: Rename method, update argument and hook method into UI event
