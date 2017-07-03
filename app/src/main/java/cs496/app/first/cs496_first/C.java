@@ -11,6 +11,8 @@ import android.widget.Button;
 
 import java.util.LinkedList;
 import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 
 /**
@@ -43,6 +45,11 @@ public class C extends Fragment {
     public static boolean youwin = false;
     public static boolean simulating = false;
     public static boolean start_first = true;
+    public static boolean resist = false;
+    public static float[][][] mv = new float[101][9][2];
+    public static int[] mvdirec = new int[101];
+    public static int recent = -1;
+
 
     Queue<Integer> que = new LinkedList<Integer>();
 
@@ -149,8 +156,12 @@ public class C extends Fragment {
     };
     Button.OnClickListener mClickListenerAns = new View.OnClickListener() {
         public void onClick(View v){
-            CanvasView cv = (CanvasView) getView().findViewById(R.id.myCanvas);
-            cv.showAns();
+            if(!simulating) {
+                simulating = true;
+                CanvasView cv = (CanvasView) getView().findViewById(R.id.myCanvas);
+                cv.showAns();
+                //simulating = false;
+            }
         }
     };
     @Override

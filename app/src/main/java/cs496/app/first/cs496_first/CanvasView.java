@@ -1,4 +1,5 @@
 package cs496.app.first.cs496_first;
+import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -7,14 +8,16 @@ import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
-import android.widget.Toast;
 
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import static cs496.app.first.cs496_first.C.chueck;
 import static cs496.app.first.cs496_first.C.coor;
 import static cs496.app.first.cs496_first.C.moveCnt;
+import static cs496.app.first.cs496_first.C.mv;
+import static cs496.app.first.cs496_first.C.mvdirec;
+import static cs496.app.first.cs496_first.C.recent;
 import static cs496.app.first.cs496_first.C.simulating;
 import static cs496.app.first.cs496_first.C.start_first;
 import static cs496.app.first.cs496_first.C.su;
@@ -35,6 +38,7 @@ public class CanvasView extends View {
     private int[] fact = {40320, 5040, 720, 120, 24, 6, 2, 1, 1};
     //private int[] chueck = new int[370000];
     int inf = 2100000000;
+
     int getPerm() {
         int[] chk = {0, 0, 0, 0, 0, 0, 0, 0, 0};
         int ans = 0;
@@ -98,7 +102,7 @@ public class CanvasView extends View {
         boolean ans;
         tmp = suu[xx]; suu[xx] = suu[yy]; suu[yy] = tmp;
         ans = (chueck[getPerm()] == wanted);
-        System.out.println(chueck[getPerm()]);
+        //System.out.println(chueck[getPerm()]);
         tmp = suu[xx]; suu[xx] = suu[yy]; suu[yy] = tmp;
         return ans;
     }
@@ -126,55 +130,257 @@ public class CanvasView extends View {
         where[zero[0] + 1][zero[1]] = where[zero[0]][zero[1]];
         moveCnt += 1;
     }
-
-    public void showAns() {
+    /*
+    public void singleAutoMove(){
         if(youwin) return;
-        for(int i=0;i<9;i++){
-            suu[i] = (where[i/3][i%3]+1)%9;
+        int cnt = 0;
+        xx=-1; yy=-1;
+        for (int i = 0; i < 9; i++) {
+            suu[i] = (where[i / 3][i % 3] + 1) % 9;
         }
-        int zzero = zero[0]*3+zero[1];
+        int zzero = zero[0] * 3 + zero[1];
         suu[zzero] = 0;
-        System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
-        System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
-        System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
+        System.out.println(suu[0] + " " + suu[1] + " " + suu[2]);
+        System.out.println(suu[3] + " " + suu[4] + " " + suu[5]);
+        System.out.println(suu[6] + " " + suu[7] + " " + suu[8]);
         int now_perm = getPerm();
-        System.out.println("NOW: "+chueck[now_perm]);
-        if(zero[0] > 0){
+        System.out.println("NOW: " + chueck[now_perm]);
+        if(chueck[now_perm] == 0) return;
+        if (zero[0] > 0) {
             System.out.print("DOWN: ");
-            if(swapFunc(zzero, zzero-3, chueck[now_perm]-1)){
-                // DOWN
+            if (swapFunc(zzero, zzero - 3, chueck[now_perm] - 1)) {
                 moveDown();
-                invalidate();
+                ValueAnimator va = ValueAnimator.ofFloat((float) ((zero[0]) / 3.0), (float) ((zero[0] + 1) / 3.0));
+                int mDuration = 200;
+                va.setDuration(mDuration);
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+                    public void onAnimationUpdate(ValueAnimator animation){
+                        coor[where[zero[0]][zero[1]]][1] = (float)animation.getAnimatedValue();
+                        coor[where[zero[0]][zero[1]]][0] = (float)(zero[1] / 3.0);
+                        invalidate();
+                    }
+                });
+                va.start();
                 return;
             }
         }
-        if(zero[0] < 2){
+        if (zero[0] < 2) {
             System.out.print("UP: ");
-            if(swapFunc(zzero, zzero+3, chueck[now_perm]-1)){
+            if (swapFunc(zzero, zzero + 3, chueck[now_perm] - 1)) {
                 // UP
                 moveUp();
-                invalidate();
+                ValueAnimator va = ValueAnimator.ofFloat((float) ((zero[0]) / 3.0), (float) ((zero[0] - 1) / 3.0));
+                int mDuration = 200;
+                va.setDuration(mDuration);
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+                    public void onAnimationUpdate(ValueAnimator animation){
+                        coor[where[zero[0]][zero[1]]][1] = (float)animation.getAnimatedValue();
+                        coor[where[zero[0]][zero[1]]][0] = (float)(zero[1] / 3.0);
+                        invalidate();
+                    }
+                });
+                va.start();
                 return;
             }
         }
-        if(zero[1] > 0){
+        if (zero[1] > 0) {
             System.out.print("RIGHT: ");
-            if(swapFunc(zzero, zzero-1, chueck[now_perm]-1)){
+            if (swapFunc(zzero, zzero - 1, chueck[now_perm] - 1)) {
                 // RIGHT
                 moveRight();
-                invalidate();
+                ValueAnimator va = ValueAnimator.ofFloat((float) ((zero[1]) / 3.0), (float) ((zero[1] + 1) / 3.0));
+                int mDuration = 200;
+                va.setDuration(mDuration);
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+                    public void onAnimationUpdate(ValueAnimator animation){
+                        coor[where[zero[0]][zero[1]]][0] = (float)animation.getAnimatedValue();
+                        coor[where[zero[0]][zero[1]]][1] = (float)(zero[0] / 3.0);
+                        invalidate();
+                    }
+                });
+                va.start();
                 return;
             }
         }
-        if(zero[1] < 2){
+        if (zero[1] < 2) {
             System.out.print("LEFT: ");
-            if(swapFunc(zzero, zzero+1, chueck[now_perm]-1)){
+            if (swapFunc(zzero, zzero + 1, chueck[now_perm] - 1)) {
                 // LEFT
                 moveLeft();
-                invalidate();
+                ValueAnimator va = ValueAnimator.ofFloat((float) ((zero[1]) / 3.0), (float) ((zero[1] - 1) / 3.0));
+                int mDuration = 200;
+                va.setDuration(mDuration);
+                va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+                    public void onAnimationUpdate(ValueAnimator animation){
+                        coor[where[zero[0]][zero[1]]][0] = (float)animation.getAnimatedValue();
+                        coor[where[zero[0]][zero[1]]][1] = (float)(zero[0] / 3.0);
+                        invalidate();
+                    }
+                });
+                va.start();
                 return;
             }
         }
+    }
+    */
+    public void showAns() {
+        //singleAutoMove();
+        xx = -1;
+        yy = -1;
+        recent = 0;
+        for (int i = 0; i < 9; i++) {
+            suu[i] = (where[i / 3][i % 3] + 1) % 9;
+        }
+        int zzero = zero[0] * 3 + zero[1];
+        suu[zzero] = 0;
+        final int now_perm = getPerm();
+        for(int i=0;i<3;i++){
+            for(int j=0;j<3;j++){
+                if(zzero == i*3+j) continue;
+                mv[0][where[i][j]][0] = (float)(j / 3.0);
+                mv[0][where[i][j]][1] = (float)(i / 3.0);
+            }
+        }
+        for(int i=0;i<chueck[now_perm];i++){
+            if(youwin) return;
+            System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
+            System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
+            System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
+            for(int j=0;j<8;j++) System.out.print("("+mv[i][j][0]+","+mv[i][j][1]+") ");
+            System.out.println("");
+            int new_perm = getPerm();
+            if ((zzero/3) > 0) {
+                if (swapFunc(zzero, zzero - 3, chueck[new_perm] - 1)) {
+                    // DOWN
+                    int target = (suu[zzero-3]+8)%9;
+                    for(int j=0;j<8;j++){
+                        if(j != target){
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }else{
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1] + (float)(1.0 / 3.0);
+                        }
+                    }
+                    mvdirec[i] = 0;
+                    int tmp = suu[zzero]; suu[zzero] = suu[zzero-3]; suu[zzero-3] = tmp;
+                    zzero -= 3;
+                    continue;
+                }
+            }
+            if ((zzero/3) < 2) {
+                if (swapFunc(zzero, zzero + 3, chueck[new_perm] - 1)) {
+                    // UP
+                    int target = (suu[zzero+3]+8)%9;
+                    for(int j=0;j<8;j++){
+                        if(j != target){
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }else{
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1] - (float)(1.0 / 3.0);
+                        }
+                    }
+                    mvdirec[i] = 1;
+                    int tmp = suu[zzero]; suu[zzero] = suu[zzero+3]; suu[zzero+3] = tmp;
+                    zzero += 3;
+                    continue;
+                }
+            }
+            if ((zzero%3) > 0) {
+                if (swapFunc(zzero, zzero - 1, chueck[new_perm] - 1)) {
+                    // RIGHT
+                    int target = (suu[zzero-1]+8)%9;
+                    for(int j=0;j<8;j++){
+                        if(j != target){
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }else{
+                            mv[i+1][j][0] = mv[i][j][0] + (float)(1.0 / 3.0);
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }
+                    }
+                    mvdirec[i] = 2;
+                    int tmp = suu[zzero]; suu[zzero] = suu[zzero-1]; suu[zzero-1] = tmp;
+                    zzero -= 1;
+                    continue;
+                }
+            }
+            if ((zzero%3) < 2) {
+                if (swapFunc(zzero, zzero + 1, chueck[new_perm] - 1)) {
+                    // LEFT
+                    int target = (suu[zzero+1]+8)%9;
+                    for(int j=0;j<8;j++){
+                        if(j != target){
+                            mv[i+1][j][0] = mv[i][j][0];
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }else{
+                            mv[i+1][j][0] = mv[i][j][0] - (float)(1.0 / 3.0);
+                            mv[i+1][j][1] = mv[i][j][1];
+                        }
+                    }
+                    mvdirec[i] = 3;
+                    int tmp = suu[zzero]; suu[zzero] = suu[zzero+1]; suu[zzero+1] = tmp;
+                    zzero += 1;
+                    continue;
+                }
+            }
+        }
+        for(int j=0;j<8;j++) System.out.print("("+mv[chueck[now_perm]][j][0]+","+mv[chueck[now_perm]][j][1]+") ");
+        System.out.println("");
+
+
+        ValueAnimator va = ValueAnimator.ofFloat((float)0, (float)(chueck[now_perm] + 0.1));
+        int mDuration = chueck[now_perm]*1000;
+        va.setDuration(mDuration);
+        va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
+            public void onAnimationUpdate(ValueAnimator animation){
+                float val = (float)animation.getAnimatedValue();
+                int where = (int)(val);
+                while(recent < where){
+                    if(mvdirec[recent] == 0){
+                        moveDown();
+                    }else if(mvdirec[recent] == 1){
+                        moveUp();
+                    }else if(mvdirec[recent] == 2){
+                        moveRight();
+                    }else{
+                        moveLeft();
+                    }
+                    recent++;
+                }
+                if(recent < where){
+                    System.out.println(recent + " " + where);
+                    recent = where;
+                }
+                if(where == chueck[now_perm]){
+                    for(int i=0;i<8;i++){
+                        coor[i][0] = mv[where][i][0];
+                        coor[i][1] = mv[where][i][1];
+                    }
+                }else{
+                    float ll = val-where;
+                    float rr = 1-ll;
+                    for(int i=0;i<8;i++){
+                        coor[i][0] = rr * mv[where][i][0] + ll * mv[where+1][i][0];
+                        coor[i][1] = rr * mv[where][i][1] + ll * mv[where+1][i][1];
+                    }
+                }
+                invalidate();
+            }
+        });
+        va.start();
+
+
+        TimerTask timertask = new TimerTask() {
+            @Override
+            public void run(){
+                simulating = false;
+            }
+        };
+        Timer timer = new Timer();
+        timer.schedule(timertask, 1000 * chueck[now_perm] + 50);
+
     }
 
     public void shuffle(){
@@ -270,6 +476,7 @@ public class CanvasView extends View {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         if (youwin) return true;
+        if(simulating) return true;
         if (event.getAction() == MotionEvent.ACTION_DOWN) {
             int x = (int) event.getX();
             int y = (int) event.getY();
