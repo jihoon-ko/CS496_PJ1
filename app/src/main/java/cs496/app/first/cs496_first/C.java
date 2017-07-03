@@ -9,6 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -27,11 +30,96 @@ public class C extends Fragment {
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
-
     private OnFragmentInteractionListener mListener;
+
+    public static int[] chueck = new int[370000];
+    public static float[][] coor = new float[9][2];
+    public static String[] su = {"1", "2", "3", "4", "5", "6", "7", "8"};
+    public static int[] zero = {2, 2};
+    public static int[][] where = new int[3][3];
+    public static int moveCnt = 0;
+    public static int xx = -1;
+    public static int yy = -1;
+    public static boolean youwin = false;
+    public static boolean simulating = false;
+    public static boolean start_first = true;
+
+    Queue<Integer> que = new LinkedList<Integer>();
+
+    private int[] suu = new int[9];
+    private int[] fact = {40320, 5040, 720, 120, 24, 6, 2, 1, 1};
+    //private int[] chueck = new int[370000];
+    int inf = 2100000000;
+    int getPerm() {
+        int[] chk = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int ans = 0;
+        for (int i = 0; i < 8; i++) {
+            int cnt = 0;
+            for (int j = 0; j < suu[i]; j++) {
+                cnt += 1 - chk[j];
+            }
+            chk[suu[i]] = 1;
+            ans += cnt * fact[i];
+        }
+        return ans;
+    }
+
+    int setPerm(int target) {
+        int[] chk = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int ans = 9;
+        for (int i = 0; i < 9; i++) {
+            int need = target / fact[i];
+            for (int j = 0; ; j++) {
+                if (chk[j] == 0) need--;
+                if (need == -1) {
+                    chk[j] = 1;
+                    suu[i] = j;
+                    if (j == 0) ans = i;
+                    break;
+                }
+            }
+            target %= fact[i];
+        }
+        return ans;
+    }
+
+    void chgfunc(int xx, int yy, int cntt) {
+        int tmp;
+        tmp = suu[xx];
+        suu[xx] = suu[yy];
+        suu[yy] = tmp;
+        int target = getPerm();
+        if (chueck[target] == inf) {
+            chueck[target] = cntt + 1;
+            que.offer(target);
+        }
+        tmp = suu[xx];
+        suu[xx] = suu[yy];
+        suu[yy] = tmp;
+    }
+
+    void bfs(int st) {
+        for (int i = 0; i < 40320 * 9; i++) {
+            chueck[i] = inf;
+        }
+        chueck[st] = 0;
+        que.offer(st);
+        while (!que.isEmpty()) {
+            int now = que.peek();
+            int zero = setPerm(now);
+            que.remove();
+            if (zero % 3 > 0) chgfunc(zero, zero - 1, chueck[now]);
+            if (zero % 3 < 2) chgfunc(zero, zero + 1, chueck[now]);
+            if (zero / 3 > 0) chgfunc(zero, zero - 3, chueck[now]);
+            if (zero / 3 < 2) chgfunc(zero, zero + 3, chueck[now]);
+        }
+    }
 
     public C() {
         // Required empty public constructor
+        for (int i = 0; i < 9; i++) suu[i] = (i + 1) % 9;
+        int start = getPerm();
+        bfs(start);
     }
 
     /**
@@ -73,9 +161,10 @@ public class C extends Fragment {
         View v = inflater.inflate(R.layout.fragment_c, container, false);
         Button cvButton = (Button) v.findViewById(R.id.canvas_button);
         cvButton.setOnClickListener(mClickListener);
+
+        CanvasView cv = (CanvasView) v.findViewById(R.id.myCanvas);
         return v;
     }
-
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
         if (mListener != null) {

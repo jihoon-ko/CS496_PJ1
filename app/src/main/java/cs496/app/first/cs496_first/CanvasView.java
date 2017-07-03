@@ -9,55 +9,123 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Toast;
 
+import java.util.LinkedList;
+import java.util.Queue;
+
+import static cs496.app.first.cs496_first.C.chueck;
+import static cs496.app.first.cs496_first.C.coor;
+import static cs496.app.first.cs496_first.C.moveCnt;
+import static cs496.app.first.cs496_first.C.simulating;
+import static cs496.app.first.cs496_first.C.start_first;
+import static cs496.app.first.cs496_first.C.su;
+import static cs496.app.first.cs496_first.C.where;
+import static cs496.app.first.cs496_first.C.xx;
+import static cs496.app.first.cs496_first.C.youwin;
+import static cs496.app.first.cs496_first.C.yy;
+import static cs496.app.first.cs496_first.C.zero;
+
 /**
  * Created by q on 2017-07-01.
  */
 
-public class CanvasView extends View
-{
-    private float[][] coor= new float[9][2];
+public class CanvasView extends View {
     private final Rect textBounds = new Rect();
-    private String[] su = {"1", "2", "3", "4", "5", "6", "7", "8"};
-    private int[] zero = {2, 2};
-    private int[][] where = new int[3][3];
-    private int moveCnt = 0;
-    private int xx = -1;
-    private int yy = -1;
-    //private Context cxt;
-    private boolean youwin = false;
 
-    public CanvasView(Context c){
+    private int[] suu = new int[9];
+    private int[] fact = {40320, 5040, 720, 120, 24, 6, 2, 1, 1};
+    //private int[] chueck = new int[370000];
+    int inf = 2100000000;
+    int getPerm() {
+        int[] chk = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int ans = 0;
+        for (int i = 0; i < 8; i++) {
+            int cnt = 0;
+            for (int j = 0; j < suu[i]; j++) {
+                cnt += 1 - chk[j];
+            }
+            chk[suu[i]] = 1;
+            ans += cnt * fact[i];
+        }
+        return ans;
+    }
+
+    int setPerm(int target) {
+        int[] chk = {0, 0, 0, 0, 0, 0, 0, 0, 0};
+        int ans = 9;
+        for (int i = 0; i < 9; i++) {
+            int need = target / fact[i];
+            for (int j = 0; ; j++) {
+                if (chk[j] == 0) need--;
+                if (need == -1) {
+                    chk[j] = 1;
+                    suu[i] = j;
+                    if (j == 0) ans = i;
+                    break;
+                }
+            }
+            target %= fact[i];
+        }
+        return ans;
+    }
+
+    protected void initView() {
+        if(start_first){
+            start_first = false;
+            shuffle();
+        }
+    }
+
+    public CanvasView(Context c) {
         super(c);
         //cxt = c;
         initView();
     }
-    public CanvasView(Context c, AttributeSet attrs){
+
+    public CanvasView(Context c, AttributeSet attrs) {
         super(c, attrs);
         //cxt = c;
         initView();
     }
-    public CanvasView(Context c, AttributeSet attrs, int defStyle){
+
+    public CanvasView(Context c, AttributeSet attrs, int defStyle) {
         super(c, attrs, defStyle);
         //cxt = c;
         initView();
     }
-    protected void initView(){
-        shuffle();
+
+    public void showAns() {
+        if(youwin) return;
+        simulating = true;
+        simulating = false;
     }
+
     public void shuffle(){
+        if(simulating) return;
+        invalidate();
         int[] place = {0, 1, 2, 3, 4, 5, 6, 7, 8};
         su[0] = "1";su[1] = "2";su[2] = "3";su[3] = "4";su[4] = "5";su[5] = "6";su[6] = "7";su[7] = "8";
-        for(int i=0;i<100;i++){
-            int one = (int)(Math.random()*8);
-            int two = (int)(Math.random()*8);
-            int tmp = place[one];
-            place[one] = place[two];
-            place[two] = tmp;
-        }
-        for(int i=0;i<9;i++) {
-            coor[i][1] = (float) ((place[i] / 3) * (1.0 / 3.0));
-            coor[i][0] = (float) ((place[i] % 3) * (1.0 / 3.0));
-            where[place[i]/3][place[i]%3] = i;
+        while(true) {
+            for (int i = 0; i < 100; i++) {
+                int one = (int) (Math.random() * 8);
+                int two = (int) (Math.random() * 8);
+                int tmp = place[one];
+                place[one] = place[two];
+                place[two] = tmp;
+            }
+            for (int i = 0; i < 9; i++) {
+                where[place[i] / 3][place[i] % 3] = i;
+                suu[place[i]] = (i+1)%9;
+            }
+            System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
+            System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
+            System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
+            if(chueck[getPerm()] < inf){
+                for (int i = 0; i < 9; i++) {
+                    coor[i][1] = (float) ((place[i] / 3) * (1.0 / 3.0));
+                    coor[i][0] = (float) ((place[i] % 3) * (1.0 / 3.0));
+                }
+                break;
+            }
         }
         moveCnt = 0;
         zero[0] = 2; zero[1] = 2;
@@ -79,15 +147,17 @@ public class CanvasView extends View
             canvas.drawRect(30, 30, width - 30, width - 30, pnt);
             pnt.setTextAlign(Paint.Align.CENTER);
             pnt.setTextSize(gili - 100);
-            for (int i = 0; i < 8; i++) {
-                //if (i % 2 == 0)
-                if(!youwin) pnt.setColor(Color.CYAN);
-                else pnt.setColor(Color.MAGENTA);
-                //else pnt.setColor(Color.MAGENTA);
-                canvas.drawRect((70 + (ww * coor[i][0])), 70 + (ww * coor[i][1]), 50 + gili + (ww * coor[i][0]), 50 + gili + (ww * coor[i][1]), pnt);
-                pnt.setColor(Color.BLACK);
-                pnt.getTextBounds(su[i], 0, 1, textBounds);
-                canvas.drawText(su[i], (60 + gili / 2 + (ww * coor[i][0])), (60 + gili / 2 + (ww * coor[i][1])) - textBounds.exactCenterY(), pnt);
+            if(true) {
+                for (int i = 0; i < 8; i++) {
+                    //if (i % 2 == 0)
+                    if (!youwin) pnt.setColor(Color.CYAN);
+                    else pnt.setColor(Color.MAGENTA);
+                    //else pnt.setColor(Color.MAGENTA);
+                    canvas.drawRect((70 + (ww * coor[i][0])), 70 + (ww * coor[i][1]), 50 + gili + (ww * coor[i][0]), 50 + gili + (ww * coor[i][1]), pnt);
+                    pnt.setColor(Color.BLACK);
+                    pnt.getTextBounds(su[i], 0, 1, textBounds);
+                    canvas.drawText(su[i], (60 + gili / 2 + (ww * coor[i][0])), (60 + gili / 2 + (ww * coor[i][1])) - textBounds.exactCenterY(), pnt);
+                }
             }
             pnt.setTextSize(130);
             if(youwin) canvas.drawText("You WIN!!!", width/2, width + 90 - textBounds.exactCenterY(), pnt);
