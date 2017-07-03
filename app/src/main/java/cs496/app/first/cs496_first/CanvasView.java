@@ -95,8 +95,9 @@ public class CanvasView extends View {
 
     public void showAns() {
         if(youwin) return;
-        simulating = true;
-        simulating = false;
+        for(int i=0;i<9;i++){
+            
+        }
     }
 
     public void shuffle(){
@@ -116,9 +117,11 @@ public class CanvasView extends View {
                 where[place[i] / 3][place[i] % 3] = i;
                 suu[place[i]] = (i+1)%9;
             }
+            /*
             System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
             System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
             System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
+            */
             if(chueck[getPerm()] < inf){
                 for (int i = 0; i < 9; i++) {
                     coor[i][1] = (float) ((place[i] / 3) * (1.0 / 3.0));

@@ -117,9 +117,11 @@ public class C extends Fragment {
 
     public C() {
         // Required empty public constructor
-        for (int i = 0; i < 9; i++) suu[i] = (i + 1) % 9;
-        int start = getPerm();
-        bfs(start);
+        if(start_first) {
+            for (int i = 0; i < 9; i++) suu[i] = (i + 1) % 9;
+            int start = getPerm();
+            bfs(start);
+        }
     }
 
     /**
