@@ -203,7 +203,7 @@ public class B extends Fragment {
             BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int imageHeight = options.outHeight;
             int imageWidth = options.outWidth;
-            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 200);
+            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 100);
             options.inJustDecodeBounds = false;
             Bitmap original = BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int width = original.getWidth();

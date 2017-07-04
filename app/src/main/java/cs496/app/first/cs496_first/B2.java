@@ -93,6 +93,7 @@ public class B2 extends Fragment {
     ArrayList<Bitmap> thumbs = new ArrayList<Bitmap>();
 
     void fetchAllImages(){
+        System.out.println("LETS FETCH!");
         if (first_fetch){
             first_fetch = false;
         }else{
@@ -116,6 +117,8 @@ public class B2 extends Fragment {
             }while(imageCursor.moveToNext());
         }
         imageCursor.close();
+        gridView.invalidateViews();
+        gridView.postInvalidate();
     }
 
     @Override
@@ -171,12 +174,8 @@ public class B2 extends Fragment {
 
             }
         });
-        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
-            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)){
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 42);
-            }else{
-                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 42);
-            }
+        if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            requestPermissions(new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 42);
         }else{
             fetchAllImages();
         }
@@ -249,7 +248,7 @@ public class B2 extends Fragment {
                 BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream((Uri) getItem(position)), null, options);
                 int imageHeight = options.outHeight;
                 int imageWidth = options.outWidth;
-                options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 200);
+                options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 100);
                 options.inJustDecodeBounds = false;
                 Bitmap original = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream((Uri) getItem(position)), null, options);
                 int width = original.getWidth();
