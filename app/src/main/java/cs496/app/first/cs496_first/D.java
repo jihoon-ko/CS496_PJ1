@@ -1,8 +1,10 @@
 package cs496.app.first.cs496_first;
 
+import android.app.Activity;
 import android.content.Context;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,9 +23,26 @@ import android.widget.TextView;
  * create an instance of this fragment.
  */
 
-class viewofeach
+class Item
 {
+    String itemname;
+    int itemnumber;
+    Item(String aitemname, int aitemnumber)
+    {
+        itemname = aitemname;
+        itemnumber = aitemnumber;
+    }
+}
 
+class Skill
+{
+    String skillname;
+    int skillmp;
+    Skill(String askillname, int askillmp)
+    {
+        skillname = askillname;
+        skillmp = askillmp;
+    }
 }
 
 class Champion
@@ -34,14 +53,31 @@ class Champion
     int mp;
     int level;
     int exp;
+    int strength;
+    int dex;
+    int inte;
+    Item[] itemv;
+    int itemposition;
+    Skill[] skillv;
+
     Champion()
     {
         hp = 30;
         mp = 30;
         level = 1;
         exp = 0;
+        strength = 10;
+        dex = 10;
+        inte = 10;
         x = 5;
         y = 5;
+        itemv = new Item[100];
+        itemv[1] = new Item("약초", 3);
+        itemposition = 1;
+        skillv = new Skill[4];
+        skillv[1] = new Skill("파이어볼", 10);
+        skillv[2] = new Skill("아이스 스피어", 15);
+        skillv[3] = new Skill("라이트닝", 20);
     }
 }
 
@@ -50,25 +86,14 @@ public class D extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    int[][] map = new int[10][10];
-    int[] flag = {1,0};
+    int[][] map =
+            {{99,99,99,99,99,99,99,99,99,99}, {99,0,0,0,0,0,0,0,0,99}, {99,0,0,0,0,0,0,0,0,99}, {99,0,0,0,0,0,0,0,0,99},{99,0,0,0,0,0,0,0,0,99},{99,0,0,0,0,0,0,0,0,99},{99,0,0,0,0,0,0,0,0,99},{99,0,0,0,0,0,0,0,0,99},{99,0,0,0,0,0,0,0,0,99},{99,99,99,99,99,99,99,99,99,99}};
+    int[] flag = {1,0,0,0,0,0,0};
     // TODO: Rename and change types of parameters
     private String mParam1;
     private String mParam2;
 
     private OnFragmentInteractionListener mListener;
-
-    int mov = 0;
-    int sta = 0;
-    int ite = 0;
-    int ski = 0;
-
-    int nor = 0;
-    int wes = 0;
-    int eas = 0;
-    int sou = 0;
-
-    int next = 0;
 
 
     public D() {
@@ -101,16 +126,33 @@ public class D extends Fragment {
             mParam2 = getArguments().getString(ARG_PARAM2);
         }
     }
+    final Champion champion = new Champion();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_d, container, false);
-        final Champion champion = new Champion();
-
-        textSetting1(champion,flag,v);
+        map[champion.x][champion.y] = 1;
+        textSetting(champion,flag,v);
         return v;
+    }
+
+    public void textSetting(final Champion champion, final int[] flag, final View v)
+    {
+        if(flag[0] == 1)
+            textSetting1(champion,flag,v);
+        else if(flag[1] == 1)
+            textSetting2(champion,flag,v);
+        else if(flag[2] == 1)
+            textSetting3(champion,flag,v);
+        else if(flag[3] == 1)
+            textSetting4(champion,flag,v);
+        else if(flag[4] == 1)
+            textSetting5(champion,flag,v);
+        else if(flag[5] == 1)
+            textSetting6(champion,flag,v);
+
     }
 
     public void textSetting1(final Champion champion, final int[] flag, final View v)
@@ -126,9 +168,9 @@ public class D extends Fragment {
         Button button3 = (Button)v.findViewById(R.id.btn3);
         Button button4 = (Button)v.findViewById(R.id.btn4);
 
+
         if(flag[0] == 1)
         {
-            flag[0] = 0;
             script.setText(R.string.action);
             action1.setText(R.string.move);
             action2.setText(R.string.state);
@@ -137,7 +179,33 @@ public class D extends Fragment {
             button1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v1) {
+                    flag[0] = 0;
+                    flag[1] = 1;
                     textSetting2(champion,flag,v);
+                }
+            });
+            button2.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[0] = 0;
+                    flag[3] = 1;
+                    textSetting4(champion,flag,v);
+                }
+            });
+            button3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[0] = 0;
+                    flag[4] = 1;
+                    textSetting5(champion,flag,v);
+                }
+            });
+            button4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[0] = 0;
+                    flag[5] = 1;
+                    textSetting6(champion,flag,v);
                 }
             });
         }
@@ -156,9 +224,8 @@ public class D extends Fragment {
         Button button3 = (Button)v.findViewById(R.id.btn3);
         Button button4 = (Button)v.findViewById(R.id.btn4);
 
-        if(flag[0] == 0)
+        if(flag[1] == 1)
         {
-            flag[0] = 1;
             script.setText(R.string.direction);
             action1.setText(R.string.north);
             action2.setText(R.string.west);
@@ -167,28 +234,265 @@ public class D extends Fragment {
             button1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v1) {
+                    map[champion.x][champion.y] = 0;
                     champion.y--;
-                    textSetting1(champion,flag,v);
+                    flag[1] = 0;
+                    if(map[champion.x][champion.y] == 0)
+                    {
+                        map[champion.x][champion.y] = 1;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                    else
+                    {
+                        champion.y++;
+                        flag[2] = 1;
+                        textSetting3(champion,flag,v);
+                    }
                 }
             });
             button2.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v1) {
+                    map[champion.x][champion.y] = 0;
                     champion.x--;
-                    textSetting1(champion,flag,v);
+                    flag[1] = 0;
+                    if(map[champion.x][champion.y] == 0)
+                    {
+                        map[champion.x][champion.y] = 1;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                    else
+                    {
+                        champion.x++;
+                        flag[2] = 1;
+                        textSetting3(champion,flag,v);
+                    }
                 }
             });
             button3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v1) {
+                    map[champion.x][champion.y] = 0;
                     champion.x++;
-                    textSetting1(champion,flag,v);
+                    flag[1] = 0;
+                    if(map[champion.x][champion.y] == 0)
+                    {
+                        map[champion.x][champion.y] = 1;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                    else
+                    {
+                        champion.x--;
+                        flag[2] = 1;
+                        textSetting3(champion,flag,v);
+                    }
                 }
             });
             button4.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v1) {
+                    map[champion.x][champion.y] = 0;
                     champion.y++;
+                    flag[1] = 0;
+                    if(map[champion.x][champion.y] == 0)
+                    {
+                        map[champion.x][champion.y] = 1;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                    else
+                    {
+                        champion.y--;
+                        flag[2] = 1;
+                        textSetting3(champion,flag,v);
+                    }
+                }
+            });
+        }
+    }
+
+    public void textSetting3(final Champion champion, final int[] flag, final View v)
+    {
+        TextView script = (TextView)v.findViewById(R.id.states);
+        TextView action1 = (TextView)v.findViewById(R.id.action1);
+        TextView action2 = (TextView)v.findViewById(R.id.action2);
+        TextView action3 = (TextView)v.findViewById(R.id.action3);
+        TextView action4 = (TextView)v.findViewById(R.id.action4);
+
+        Button button1 = (Button)v.findViewById(R.id.btn1);
+        Button button2 = (Button)v.findViewById(R.id.btn2);
+        Button button3 = (Button)v.findViewById(R.id.btn3);
+        Button button4 = (Button)v.findViewById(R.id.btn4);
+
+        if(flag[2] == 1)
+        {
+            script.setText(R.string.wall);
+            action1.setText(R.string.back);
+            action2.setText("");
+            action3.setText("");
+            action4.setText("");
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[2] = 0;
+                    flag[0] = 1;
+                    textSetting1(champion,flag,v);
+                }
+            });
+        }
+    }
+
+    public void textSetting4(final Champion champion, final int[] flag, final View v)
+    {
+        TextView script = (TextView)v.findViewById(R.id.states);
+        TextView action1 = (TextView)v.findViewById(R.id.action1);
+        TextView action2 = (TextView)v.findViewById(R.id.action2);
+        TextView action3 = (TextView)v.findViewById(R.id.action3);
+        TextView action4 = (TextView)v.findViewById(R.id.action4);
+
+        Button button1 = (Button)v.findViewById(R.id.btn1);
+        Button button2 = (Button)v.findViewById(R.id.btn2);
+        Button button3 = (Button)v.findViewById(R.id.btn3);
+        Button button4 = (Button)v.findViewById(R.id.btn4);
+        if(flag[3] == 1)
+        {
+            String nowscript = getString(R.string.stat) + "\n" +
+                    getString(R.string.lvl) + " : " + String.valueOf(champion.level) + "\n" +
+                    getString(R.string.hp) + " : " + String.valueOf(champion.hp) + "\n" +
+                    getString(R.string.mp) + " : " + String.valueOf(champion.mp) + "\n" +
+                    getString(R.string.exp) + " : " + String.valueOf(champion.exp) + "\n" +
+                    getString(R.string.str) + " : " + String.valueOf(champion.strength) + "\n" +
+                    getString(R.string.dex) + " : " + String.valueOf(champion.dex) + "\n" +
+                    getString(R.string.inte) + " : " + String.valueOf(champion.inte);
+                    ;
+            script.setText(nowscript);
+            action1.setText(R.string.back);
+            action2.setText("");
+            action3.setText("");
+            action4.setText("");
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[3] = 0;
+                    flag[0] = 1;
+                    textSetting1(champion,flag,v);
+                }
+            });
+        }
+    }
+
+    public void textSetting5(final Champion champion, final int[] flag, final View v) {
+        TextView script = (TextView) v.findViewById(R.id.states);
+        TextView action1 = (TextView) v.findViewById(R.id.action1);
+        TextView action2 = (TextView) v.findViewById(R.id.action2);
+        TextView action3 = (TextView) v.findViewById(R.id.action3);
+        TextView action4 = (TextView) v.findViewById(R.id.action4);
+
+        Button button1 = (Button) v.findViewById(R.id.btn1);
+        Button button2 = (Button) v.findViewById(R.id.btn2);
+        Button button3 = (Button) v.findViewById(R.id.btn3);
+        Button button4 = (Button) v.findViewById(R.id.btn4);
+
+        if(flag[4] == 1)
+        {
+            if(champion.itemv[champion.itemposition] != null)
+            {
+                script.setText(champion.itemv[champion.itemposition].itemname + " : " + String.valueOf(champion.itemv[champion.itemposition].itemnumber));
+                action1.setText(R.string.before);
+                action2.setText(R.string.next);
+                action3.setText(R.string.use);
+                action4.setText(R.string.back);
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        champion.itemposition--;
+                        textSetting5(champion,flag,v);
+                    }
+                });
+                button2.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        champion.itemposition++;
+                        textSetting5(champion,flag,v);
+                    }
+                });
+                button3.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        champion.itemv[champion.itemposition].itemnumber--;
+                        switch (champion.itemv[champion.itemposition].itemname)
+                        {
+                            case "약초":
+                                champion.hp += 15;
+                        }
+                        if(champion.itemv[champion.itemposition].itemnumber == 0)
+                        {
+                            champion.itemv[champion.itemposition] = null;
+                            System.arraycopy(champion.itemv, champion.itemposition + 1, champion.itemv, champion.itemposition, 99 - champion.itemposition);
+                            champion.itemv[99] = null;
+                            champion.itemposition--;
+                        }
+                        textSetting5(champion,flag,v);
+                    }
+                });
+                button4.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        flag[4] = 0;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                });
+            }
+            else
+            {
+                script.setText("아이템이 없습니다.");
+                action1.setText(R.string.back);
+                action2.setText("");
+                action3.setText("");
+                action4.setText("");
+                champion.itemposition = 1;
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        flag[4] = 0;
+                        flag[0] = 1;
+                        textSetting1(champion,flag,v);
+                    }
+                });
+            }
+        }
+    }
+
+    public void textSetting6(final Champion champion, final int[] flag, final View v) {
+        TextView script = (TextView) v.findViewById(R.id.states);
+        TextView action1 = (TextView) v.findViewById(R.id.action1);
+        TextView action2 = (TextView) v.findViewById(R.id.action2);
+        TextView action3 = (TextView) v.findViewById(R.id.action3);
+        TextView action4 = (TextView) v.findViewById(R.id.action4);
+
+        Button button1 = (Button) v.findViewById(R.id.btn1);
+        Button button2 = (Button) v.findViewById(R.id.btn2);
+        Button button3 = (Button) v.findViewById(R.id.btn3);
+        Button button4 = (Button) v.findViewById(R.id.btn4);
+        if(flag[5] == 1)
+        {
+            String nowscript = champion.skillv[1].skillname + " : " + String.valueOf(champion.skillv[1].skillmp) + "mp\n" +
+                    champion.skillv[2].skillname + " : " + String.valueOf(champion.skillv[2].skillmp) + "mp\n" +
+                    champion.skillv[3].skillname + " : " + String.valueOf(champion.skillv[3].skillmp) + "mp\n";
+            script.setText(nowscript);
+            action1.setText(R.string.back);
+            action2.setText("");
+            action3.setText("");
+            action4.setText("");
+            button1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v1) {
+                    flag[5] = 0;
+                    flag[0] = 1;
                     textSetting1(champion,flag,v);
                 }
             });

@@ -19,8 +19,14 @@
     <string name="goblin">고블린</string>
     <string name="character">캐릭터</string>
 
-    <string name="hp">HP:</string>
-    <string name="mp">MP:</string>
+    <string name="stat">현재 상태</string>
+    <string name="hp">HP</string>
+    <string name="mp">MP</string>
+    <string name="lvl">Level</string>
+    <string name="exp">경험치</string>
+    <string name="str">힘</string>
+    <string name="dex">민첩</string>
+    <string name="inte">지능</string>
 
     <string name="move">이동</string>
     <string name="state">현재 상태 확인</string>
@@ -33,4 +39,23 @@
     <string name="south">남쪽</string>
 
     <string name="back">뒤로</string>
+
+    <string name="wall">벽입니다.</string>
+
+    <string name="ok">확인</string>
+
+    <string name="whatwillyoudo">무엇을 하시겠습니까?</string>
+    <string name="attack">공격</string>
+    <string name="run">도망</string>
+
+    <string name="before">이전</string>
+    <string name="next">다음</string>
+    <string name="use">사용</string>
+
+    <string name="fire">파이어볼</string>
+    <string name="ice">아이스 스피어</string>
+    <string name="elec">라이트닝</string>
+
+
+
 </resources>

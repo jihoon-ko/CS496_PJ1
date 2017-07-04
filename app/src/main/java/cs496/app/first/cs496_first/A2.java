@@ -208,7 +208,7 @@ public class A2 extends Fragment {
         }
         else
         {
-            ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE}, CONTACT_CODE);
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE}, CONTACT_CODE);
         }
     }
 
