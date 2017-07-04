@@ -9,18 +9,23 @@
         android:layout_height="wrap_content">
         <EditText
             android:id="@+id/searchbar"
-            android:layout_width="190dp"
+            android:layout_width="150dp"
             android:layout_height="wrap_content" />
         <Button
             android:id="@+id/searchbtn"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="검색"/>
         <Button
             android:id="@+id/resetbtn"
-            android:layout_width="wrap_content"
+            android:layout_width="70dp"
             android:layout_height="wrap_content"
             android:text="초기화"/>
+        <Button
+            android:id="@+id/addphonenum"
+            android:layout_width="70dp"
+            android:layout_height="wrap_content"
+            android:text="추가"/>
     </LinearLayout>
     <ListView
         android:layout_width="wrap_content"

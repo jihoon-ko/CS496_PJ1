@@ -1,6 +1,12 @@
 package cs496.app.first.cs496_first;
 
 import java.util.Arrays;
+
+import android.content.ContentProviderOperation;
+import android.content.DialogInterface;
+import android.content.OperationApplicationException;
+import android.os.RemoteException;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.Manifest;
 import android.content.ContentResolver;
@@ -14,6 +20,7 @@ import android.provider.ContactsContract;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.support.v7.widget.LinearLayoutCompat;
 import android.text.Layout;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -22,6 +29,7 @@ import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -186,18 +194,22 @@ public class A2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
+        System.out.println("1");
         View v = inflater.inflate(R.layout.fragment_a2, container, false);
         mResult = (ListView)v.findViewById(R.id.result1);
         final EditText searchtext = (EditText)v.findViewById(R.id.searchbar);
         Button searchbutton = (Button)v.findViewById(R.id.searchbtn);
         Button resetbutton = (Button)v.findViewById(R.id.resetbtn);
+        Button addbutton = (Button)v.findViewById(R.id.addphonenum);
         if(flag2 == 0)
         {
+            System.out.println("2");
             Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList);
             mResult.setAdapter(Adapter);
         }
         else
         {
+            System.out.println("3");
             tryOutContact();
             flag2 = 0;
         }
@@ -229,6 +241,80 @@ public class A2 extends Fragment {
                 mResult.setAdapter(Adapter);
             }
         });
+
+        addbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v)
+            {
+                final LinearLayout linear = (LinearLayout)v.inflate(getActivity(), R.layout.fragment_a2_add, null);
+                new AlertDialog.Builder(getActivity())
+                        .setTitle("주소록 추가")
+                        .setView(linear)
+                        .setPositiveButton("추가", new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int whichButton)
+                            {
+                                ArrayList<ContentProviderOperation> list = new ArrayList<ContentProviderOperation>();
+                                boolean isitname = false;
+                                boolean isitnumber = false;
+                                EditText addname = (EditText)linear.findViewById(R.id.addname);
+                                EditText addnumber = (EditText)linear.findViewById(R.id.addnumber);
+                                for(int i=0;i<sPhoneList.size();i++)
+                                {
+                                    if(sPhoneList.get(i).name.equals(addname.getText().toString()))
+                                    {
+                                        isitname = true;
+                                    }
+                                    if(sPhoneList.get(i).phonenum.equals(addnumber.getText().toString()))
+                                    {
+                                        isitnumber = true;
+                                    }
+                                }
+                                if(!isitname || !isitnumber)
+                                {
+                                    try{
+                                        list.add(ContentProviderOperation.newInsert(ContactsContract.RawContacts.CONTENT_URI)
+                                                .withValue(ContactsContract.RawContacts.ACCOUNT_TYPE,null)
+                                                .withValue(ContactsContract.RawContacts.ACCOUNT_NAME,null)
+                                                .build());
+
+                                        list.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                                                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID,0)
+                                                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE)
+                                                .withValue(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME, addname.getText().toString())
+                                                .build());
+
+                                        list.add(ContentProviderOperation.newInsert(ContactsContract.Data.CONTENT_URI)
+                                                .withValueBackReference(ContactsContract.Data.RAW_CONTACT_ID, 0)
+                                                .withValue(ContactsContract.Data.MIMETYPE, ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE)
+                                                .withValue(ContactsContract.CommonDataKinds.Phone.NUMBER, addnumber.getText().toString())
+                                                .withValue(ContactsContract.CommonDataKinds.Phone.TYPE  , ContactsContract.CommonDataKinds.Phone.TYPE_MOBILE)
+                                                .build());
+                                        getActivity().getApplicationContext().getContentResolver().applyBatch(ContactsContract.AUTHORITY, list);
+                                        list.clear();
+                                        arGeneral.clear();
+                                        arGeneral2.clear();
+                                        sPhoneList.clear();
+                                        outContact();
+                                    }
+                                    catch (RemoteException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                    catch (OperationApplicationException e)
+                                    {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        })
+                        .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int whichButton) {
+
+                            }
+                        }).show();
+            }
+        });
         return v;
     }
 
@@ -236,11 +322,12 @@ public class A2 extends Fragment {
     {
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.READ_CONTACTS) == PackageManager.PERMISSION_GRANTED)
         {
+            System.out.println("5");
             outContact();
         }
         else
         {
-            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE}, CONTACT_CODE);
+            requestPermissions(new String[]{Manifest.permission.READ_CONTACTS, Manifest.permission.CALL_PHONE, Manifest.permission.WRITE_CONTACTS}, CONTACT_CODE);
         }
     }
 
@@ -251,8 +338,9 @@ public class A2 extends Fragment {
         switch (requestCode)
         {
             case CONTACT_CODE:
-                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED)
+                if(grantResults.length>0 && grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults[1] == PackageManager.PERMISSION_GRANTED && grantResults[2] == PackageManager.PERMISSION_GRANTED)
                 {
+                    System.out.println("6");
                     outContact();
                 }
         }
