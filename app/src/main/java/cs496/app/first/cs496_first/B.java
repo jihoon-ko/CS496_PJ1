@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.text.Layout;
@@ -203,7 +204,7 @@ public class B extends Fragment {
             BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int imageHeight = options.outHeight;
             int imageWidth = options.outWidth;
-            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 100);
+            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 200);
             options.inJustDecodeBounds = false;
             Bitmap original = BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int width = original.getWidth();
@@ -226,8 +227,29 @@ public class B extends Fragment {
             imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
             imageView.setPadding(5, 5, 5, 5);
-            imageView.setImageBitmap(getBitmap(position));
+            imageView.setImageResource(R.drawable.ic_action_wallpaper);
+            LoadAsyncTask asyncTask = new LoadAsyncTask(imageView);
+            asyncTask.execute(position);
+            //imageView.setImageBitmap(getBitmap(position));
             return imageView;
+        }
+        public class LoadAsyncTask extends AsyncTask<Integer, String, Bitmap> {
+            private final ImageView imageView;
+            public LoadAsyncTask(ImageView imgV){
+                imageView = imgV;
+            }
+            @Override
+            protected Bitmap doInBackground(Integer... param){
+                return getBitmap(param[0]);
+            }
+            @Override
+            protected void onPostExecute(Bitmap bmRes){
+                if(bmRes != null){
+                    super.onPostExecute(bmRes);
+                    imageView.setImageBitmap(bmRes);
+                    imageView.invalidate();
+                }
+            }
         }
     };
 }
