@@ -2,6 +2,7 @@ package cs496.app.first.cs496_first;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.StrictMode;
@@ -75,8 +76,8 @@ class Champion
         atk = 10;
         def = 10;
         spe = 20;
-        x = 5;
-        y = 5;
+        x = 50;
+        y = 50;
         itemv = new Item[100];
         itemv[1] = new Item("약초", 3);
         itemv[2] = new Item("마나포션", 3);
@@ -91,22 +92,45 @@ class Champion
 
 class Monster
 {
+    String name;
     int x;
     int y;
     int hp;
     int mp;
     int atk;
     int def;
+    int exp;
+    Item item;
+    Monster()
+    {
+    }
 }
 
 class Goblin extends Monster
 {
     Goblin()
     {
+        name = "고블린";
         hp = 50;
         mp = 0;
         atk = 15;
         def = 0;
+        exp = 20;
+        item = new Item("약초", 1);
+    }
+}
+
+class Ogre extends Monster
+{
+    Ogre()
+    {
+        name = "오우거";
+        hp = 100;
+        mp = 0;
+        atk = 40;
+        def = 10;
+        exp = 100;
+        item = new Item("마나포션",2);
     }
 }
 
@@ -115,17 +139,7 @@ public class D extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    int[][] map =
-            {{99,99,99,99,99,99,99,99,99,99},
-                    {99,50,0,0,0,0,0,50,0,99},
-                    {99,0,0,0,0,0,0,0,0,99},
-                    {99,0,50,0,0,0,0,0,0,99},
-                    {99,0,0,0,0,0,0,0,0,99},
-                    {99,0,0,0,0,0,0,50,0,99},
-                    {99,0,0,0,0,0,0,0,0,99},
-                    {99,0,0,50,0,0,0,0,0,99},
-                    {99,50,0,0,0,0,0,0,50,99},
-                    {99,99,99,99,99,99,99,99,99,99}};
+    int[][] map = new int[102][102];
     int[] flag = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -166,13 +180,45 @@ public class D extends Fragment {
     }
     final Champion champion = new Champion();
     final Goblin goblin = new Goblin();
+    final Ogre ogre = new Ogre();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         final View v = inflater.inflate(R.layout.fragment_d, container, false);
+        getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
         map[champion.x][champion.y] = 1;
+        for(int i=0; i<102; i++)
+        {
+            map[i][0] = 99;
+            map[i][101] = 99;
+            map[0][i] = 99;
+            map[0][101] = 99;
+        }
+        map[12][34] = 50;
+        map[56][78] = 50;
+        map[94][15] = 50;
+        map[38][72] = 50;
+        map[93][76] = 50;
+        map[81][51] = 50;
+        map[97][82] = 50;
+        map[33][66] = 50;
+        map[50][51] = 50;
+        map[51][50] = 50;
+        map[52][50] = 50;
+        map[50][52] = 50;
+        map[48][50] = 50;
+        map[50][48] = 50;
+        map[50][49] = 50;
+        map[49][50] = 50;
+        map[22][11] = 50;
+        map[99][88] = 70;
+        map[26][94] = 70;
+        map[87][62] = 70;
+        map[55][55] = 70;
+        map[44][44] = 70;
+
         textSetting(champion,flag,v);
         return v;
     }
@@ -208,7 +254,6 @@ public class D extends Fragment {
 
     public void textSetting1(final Champion champion, final int[] flag, final View v)
     {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView)v.findViewById(R.id.states);
         TextView action1 = (TextView)v.findViewById(R.id.action1);
         TextView action2 = (TextView)v.findViewById(R.id.action2);
@@ -265,7 +310,6 @@ public class D extends Fragment {
 
     public void textSetting2(final Champion champion, final int[] flag, final View v)
     {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView)v.findViewById(R.id.states);
         TextView action1 = (TextView)v.findViewById(R.id.action1);
         TextView action2 = (TextView)v.findViewById(R.id.action2);
@@ -397,7 +441,6 @@ public class D extends Fragment {
 
     public void textSetting3(final Champion champion, final int[] flag, final View v)
     {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView)v.findViewById(R.id.states);
         TextView action1 = (TextView)v.findViewById(R.id.action1);
         TextView action2 = (TextView)v.findViewById(R.id.action2);
@@ -429,7 +472,6 @@ public class D extends Fragment {
 
     public void textSetting4(final Champion champion, final int[] flag, final View v)
     {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView)v.findViewById(R.id.states);
         TextView action1 = (TextView)v.findViewById(R.id.action1);
         TextView action2 = (TextView)v.findViewById(R.id.action2);
@@ -468,7 +510,6 @@ public class D extends Fragment {
     }
 
     public void textSetting5(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -580,7 +621,6 @@ public class D extends Fragment {
     }
 
     public void textSetting6(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -613,7 +653,6 @@ public class D extends Fragment {
     }
 
     public void textSetting7(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -630,11 +669,17 @@ public class D extends Fragment {
             if(champion.hp > 0)
             {
                 String tel = "monster";
+                Monster monster = new Monster();
                 if(map[champion.x][champion.y] == 51)
                 {
-                    tel = getString(R.string.goblin) + getString(R.string.encounter) + "\n" +
-                            getString(R.string.whatwillyoudo);
+                    monster = goblin;
                 }
+                else if(map[champion.x][champion.y] == 71)
+                {
+                    monster = ogre;
+                }
+                tel = monster.name + getString(R.string.encounter) + "\n" +
+                        getString(R.string.whatwillyoudo);
                 script.setText(tel);
                 action1.setText(R.string.attack);
                 action2.setText(R.string.item);
@@ -670,8 +715,7 @@ public class D extends Fragment {
                         flag[6] = 0;
                         flag[0] = 1;
                         map[champion.x][champion.y] = 1;
-                        goblin.hp = 60;
-                        goblin.mp = 0;
+                        monsterreset();
                         textSetting1(champion,flag,v);
                     }
                 });
@@ -688,7 +732,6 @@ public class D extends Fragment {
     }
 
     public void textSetting8(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -701,13 +744,40 @@ public class D extends Fragment {
         Button button4 = (Button) v.findViewById(R.id.btn4);
 
         if (flag[7] == 1) {
+            int mydamage = 0;
+            int mondamage = 0;
+            Monster monster = new Monster();
             if(map[champion.x][champion.y] == 51)
             {
-                script.setText(getString(R.string.goblin) + "을 " + getString(R.string.attack) + " : " + String.valueOf(champion.atk - goblin.def) + "데미지" + "\n" +
-                                getString(R.string.goblin) + "이 " + getString(R.string.attack) + " : " + String.valueOf(goblin.atk - champion.def) + "데미지");
-                champion.hp -= (goblin.atk-champion.def);
-                goblin.hp -= (champion.atk-goblin.def);
+                monster = goblin;
             }
+            else if(map[champion.x][champion.y] == 71)
+            {
+                monster = ogre;
+            }
+
+
+            if(champion.atk - monster.def > 0)
+            {
+                mydamage = champion.atk - monster.def;
+            }
+            else
+            {
+                mydamage = 0;
+            }
+
+            if(monster.atk - champion.def > 0)
+            {
+                mondamage = monster.atk - champion.def;
+            }
+            else
+            {
+                mondamage = 0;
+            }
+            script.setText(monster.name + "을(를) " + getString(R.string.attack) + " : " + String.valueOf(mydamage) + "데미지" + "\n" +
+                    monster.name + "이(가) " + getString(R.string.attack) + " : " + String.valueOf(mondamage) + "데미지");
+            champion.hp -= mondamage;
+            monster.hp -= mydamage;
             action1.setText("다음");
             action2.setText("");
             action3.setText("");
@@ -739,13 +809,27 @@ public class D extends Fragment {
                                 textSetting11(champion,flag,v);
                             }
                         }
+                        else if(map[champion.x][champion.y] == 71)
+                        {
+                            if(ogre.hp > 0)
+                            {
+                                flag[6] = 1;
+                                flag[7] = 0;
+                                textSetting7(champion, flag, v);
+                            }
+                            else
+                            {
+                                flag[7] = 0;
+                                flag[10] = 1;
+                                textSetting11(champion,flag,v);
+                            }
+                        }
                     }
                 }
             });
         }
     }
     public void textSetting9(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -858,7 +942,6 @@ public class D extends Fragment {
     }
 
     public void textSetting10(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -920,7 +1003,6 @@ public class D extends Fragment {
         }
     }
     public void textSetting11(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -934,63 +1016,69 @@ public class D extends Fragment {
 
         if(flag[10] == 1)
         {
+            Monster monster = new Monster();
             if(map[champion.x][champion.y] == 51)
             {
-                script.setText(getString(R.string.goblin) + "을 무찔렀습니다.\n경험치 : 20\n얻은 아이템 : 약초 1");
-                action1.setText("돌아가기");
-                action2.setText("");
-                action3.setText("");
-                action4.setText("");
-                champion.exp += 20;
-                if(champion.exp >= 100)
+                monster = goblin;
+            }
+            else if(map[champion.x][champion.y] == 71)
+            {
+                monster = ogre;
+            }
+            script.setText(monster.name + "을(를) 무찔렀습니다.\n경험치 : " + String.valueOf(monster.exp) + "\n" + "얻은 아이템 : " + monster.item.itemname + " " + String.valueOf(monster.item.itemnumber));
+            champion.exp += monster.exp;
+            boolean isit = false;
+            for(int i = 1;i<100;i++)
+            {
+                if(champion.itemv[i] != null)
                 {
-                    champion.level++;
-                    champion.hp += 10;
-                    champion.maxhp += 10;
-                    champion.mp += 15;
-                    champion.maxmp += 15;
-                    champion.atk += 5;
-                    champion.def += 5;
-                    champion.spe += 10;
-                    champion.exp -= 100;
-                }
-                boolean isit = false;
-                for(int i = 1;i<100;i++)
-                {
-                    if(champion.itemv[i] != null)
+                    if(champion.itemv[i].itemname.equals(monster.item.itemname))
                     {
-                        if(champion.itemv[i].itemname.equals("약초"))
-                        {
-                            champion.itemv[i].itemnumber++;
-                            isit = true;
-                        }
-                        else
-                        {
-                            continue;
-                        }
+                        champion.itemv[i].itemnumber++;
+                        isit = true;
                     }
                     else
                     {
                         continue;
                     }
                 }
-                if(!isit)
+                else
                 {
-                    for(int i=1;i<100;i++)
+                    continue;
+                }
+            }
+            if(!isit)
+            {
+                for(int i=1;i<100;i++)
+                {
+                    if(champion.itemv[i] != null)
                     {
-                        if(champion.itemv[i] != null)
-                        {
-                            continue;
-                        }
-                        else
-                        {
-                            champion.itemv[i] = new Item("약초", 1);
-                        }
+                        continue;
+                    }
+                    else
+                    {
+                        champion.itemv[i] = new Item(monster.item.itemname, monster.item.itemnumber);
                     }
                 }
-                goblin.hp = 60;
-                map[champion.x][champion.y] = 1;
             }
+            if(champion.exp >= (100 + (champion.level - 1) * (champion.level - 1) * 50))
+            {
+                champion.level++;
+                champion.hp += 10;
+                champion.maxhp += 10;
+                champion.mp += 15;
+                champion.maxmp += 15;
+                champion.atk += 5;
+                champion.def += 5;
+                champion.spe += 10;
+                champion.exp -= 100;
+            }
+            monsterreset();
+            map[champion.x][champion.y] = 1;
+            action1.setText("돌아가기");
+            action2.setText("");
+            action3.setText("");
+            action4.setText("");
 
             button1.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -1004,7 +1092,6 @@ public class D extends Fragment {
     }
 
     public void textSetting12(final Champion champion, final int[] flag, final View v) {
-        System.out.println(Arrays.deepToString(map));
         TextView script = (TextView) v.findViewById(R.id.states);
         TextView action1 = (TextView) v.findViewById(R.id.action1);
         TextView action2 = (TextView) v.findViewById(R.id.action2);
@@ -1017,26 +1104,43 @@ public class D extends Fragment {
         Button button4 = (Button) v.findViewById(R.id.btn4);
 
         if(flag[11] == 1) {
+            Monster monster = new Monster();
             if(map[champion.x][champion.y] == 51)
             {
-                int damage = 0;
-                switch (champion.skillv[champion.skillposition].skillname)
-                {
-                    case "파이어볼":
-                        damage = champion.spe;
-                        break;
-                    case "아이스 스피어":
-                        damage = champion.spe*2;
-                        break;
-                    case "라이트닝":
-                        damage = champion.spe*3;
-                        break;
-                }
-                script.setText(getString(R.string.goblin) + "을 " + champion.skillv[champion.skillposition].skillname + "(으)로" + getString(R.string.attack) + " : " + String.valueOf(damage) + "데미지" + "\n" +
-                        getString(R.string.goblin) + "이 " + getString(R.string.attack) + " : " + String.valueOf(goblin.atk - champion.def) + "데미지");
-                champion.hp -= (goblin.atk-champion.def);
-                goblin.hp -= damage;
+                monster = goblin;
             }
+            else if(map[champion.x][champion.y] == 71)
+            {
+                monster = ogre;
+            }
+            int mydamage = 0;
+            int mondamage = 0;
+            switch (champion.skillv[champion.skillposition].skillname)
+            {
+                case "파이어볼":
+                    mydamage = champion.spe;
+                    break;
+                case "아이스 스피어":
+                    mydamage = champion.spe*2;
+                    break;
+                case "라이트닝":
+                    mydamage = champion.spe*3;
+                    break;
+            }
+
+            if(monster.atk - champion.def > 0)
+            {
+                mondamage = monster.atk - champion.def;
+            }
+            else
+            {
+                mondamage = 0;
+            }
+
+            script.setText(monster.name + "을(를) " + champion.skillv[champion.skillposition].skillname + "(으)로" + getString(R.string.attack) + " : " + String.valueOf(mydamage) + "데미지" + "\n" +
+                    monster.name + "이(가) " + getString(R.string.attack) + " : " + String.valueOf(mondamage) + "데미지");
+            champion.hp -= mondamage;
+            monster.hp -= mydamage;
             action1.setText("다음");
             action2.setText("");
             action3.setText("");
@@ -1068,12 +1172,32 @@ public class D extends Fragment {
                                 textSetting11(champion,flag,v);
                             }
                         }
+                        else if(map[champion.x][champion.y] == 71)
+                        {
+                            if(ogre.hp > 0)
+                            {
+                                flag[6] = 1;
+                                flag[11] = 0;
+                                textSetting7(champion, flag, v);
+                            }
+                            else
+                            {
+                                flag[11] = 0;
+                                flag[10] = 1;
+                                textSetting11(champion,flag,v);
+                            }
+                        }
                     }
                 }
             });
         }
     }
 
+    void monsterreset()
+    {
+        goblin.hp = 50;
+        ogre.hp = 100;
+    }
 
     // TODO: Rename method, update argument and hook method into UI event
     public void onButtonPressed(Uri uri) {
