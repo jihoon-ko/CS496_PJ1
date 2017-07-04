@@ -8,8 +8,8 @@
     <TextView
         android:id="@+id/states"
         android:layout_width="match_parent"
-        android:layout_height="250dp"
-        android:layout_margin="15dp"/>
+        android:layout_height="180dp"
+        android:layout_margin="50dp"/>
     <LinearLayout
         android:id="@+id/choice1"
         android:layout_width="match_parent"
@@ -26,7 +26,8 @@
             android:id="@+id/action1"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="12dp"/>
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="26dp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/choice2"
@@ -44,7 +45,8 @@
             android:id="@+id/action2"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="12dp"/>
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="26dp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/choice3"
@@ -62,7 +64,8 @@
             android:id="@+id/action3"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="12dp"/>
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="26dp"/>
     </LinearLayout>
     <LinearLayout
         android:id="@+id/choice4"
@@ -80,6 +83,7 @@
             android:id="@+id/action4"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_marginLeft="12dp"/>
+            android:layout_marginLeft="12dp"
+            android:layout_marginTop="26dp"/>
     </LinearLayout>
 </LinearLayout>
