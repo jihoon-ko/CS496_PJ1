@@ -7,7 +7,6 @@
     tools:context="cs496.app.first.cs496_first.ImageviewActivity">
     <com.github.chrisbanes.photoview.PhotoView
         android:id="@+id/detailPhotoview"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        />
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" />
 </android.support.constraint.ConstraintLayout>

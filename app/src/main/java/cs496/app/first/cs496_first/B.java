@@ -196,24 +196,28 @@ public class B extends Fragment {
             BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int imageHeight = options.outHeight;
             int imageWidth = options.outWidth;
-            options.inSampleSize = Math.max(1, imageWidth * 2 / (realwidth / one_row / 5));
+            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) * 2 / (realwidth / one_row / 5));
             options.inJustDecodeBounds = false;
-            return BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+            Bitmap original = BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+            int width = original.getWidth();
+            int height = original.getHeight();
+            if(original.getWidth() > original.getHeight()){
+                return Bitmap.createBitmap(original, (width - height)/2, 0, height, height);
+            }else{
+                return Bitmap.createBitmap(original, 0, (height - width)/2, width, width);
+            }
         }
         public View getView(int position, View convertView, ViewGroup parent){
             ImageView imageView;
             int width = dm.widthPixels;
             if(convertView == null){
                 imageView = new ImageView(mContext);
-                imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                imageView.setPadding(10, 10, 10, 10);
             }else{
                 imageView = (ImageView) convertView;
-                imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
-                imageView.setScaleType(ImageView.ScaleType.FIT_XY);
-                imageView.setPadding(10, 10, 10, 10);
             }
+            imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
+            imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
+            imageView.setPadding(10, 10, 10, 10);
             imageView.setImageBitmap(getBitmap(position));
             return imageView;
         }
