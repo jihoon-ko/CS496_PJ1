@@ -105,15 +105,23 @@ public class B2 extends Fragment {
         int dataColumnIndex = imageCursor.getColumnIndex(projection[0]);
         System.out.println("imagecursor Count: " + imageCursor.getCount());
         System.out.println("imagecursor Count: " + dataColumnIndex);
+        List<String> imgExt = new ArrayList<String>();
+        imgExt.add("bmp"); imgExt.add("jpg"); imgExt.add("jpeg"); imgExt.add("gif"); imgExt.add("png");
+        imgExt.add("tif"); imgExt.add("tiff"); imgExt.add("raw"); imgExt.add("svg");
         if(imageCursor == null) {
         }else if(imageCursor.moveToFirst()){
             do{
                 String filePath = imageCursor.getString(dataColumnIndex);
-                File saveFile = new File(filePath);
-                System.out.println(filePath);
-                Uri imageUri = Uri.fromFile(saveFile);
-                result.add(imageUri);
-                thumbs.add(null);
+                int whereIsDot = filePath.lastIndexOf('.');
+                String ext = filePath.substring(whereIsDot+1, filePath.length());
+                ext.toLowerCase();
+                if(whereIsDot > -1 && imgExt.contains(ext)) {
+                    File saveFile = new File(filePath);
+                    System.out.println(filePath);
+                    Uri imageUri = Uri.fromFile(saveFile);
+                    result.add(imageUri);
+                    thumbs.add(null);
+                }
             }while(imageCursor.moveToNext());
         }
         imageCursor.close();
