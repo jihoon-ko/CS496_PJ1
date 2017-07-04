@@ -36,6 +36,7 @@ public class CanvasView extends View {
 
     private int[] suu = new int[9];
     private int[] fact = {40320, 5040, 720, 120, 24, 6, 2, 1, 1};
+    Timer timer = new Timer(true);
     //private int[] chueck = new int[370000];
     int inf = 2100000000;
 
@@ -77,6 +78,13 @@ public class CanvasView extends View {
             start_first = false;
             shuffle();
         }
+        TimerTask timertask = new TimerTask() {
+            @Override
+            public void run(){
+                postInvalidate();
+            }
+        };
+        timer.schedule(timertask, 50, 50);
     }
 
     public CanvasView(Context c) {
@@ -243,11 +251,6 @@ public class CanvasView extends View {
         }
         for(int i=0;i<chueck[now_perm];i++){
             if(youwin) return;
-            System.out.println(suu[0]+" "+suu[1]+" "+suu[2]);
-            System.out.println(suu[3]+" "+suu[4]+" "+suu[5]);
-            System.out.println(suu[6]+" "+suu[7]+" "+suu[8]);
-            for(int j=0;j<8;j++) System.out.print("("+mv[i][j][0]+","+mv[i][j][1]+") ");
-            System.out.println("");
             int new_perm = getPerm();
             if ((zzero/3) > 0) {
                 if (swapFunc(zzero, zzero - 3, chueck[new_perm] - 1)) {
@@ -326,12 +329,9 @@ public class CanvasView extends View {
                 }
             }
         }
-        for(int j=0;j<8;j++) System.out.print("("+mv[chueck[now_perm]][j][0]+","+mv[chueck[now_perm]][j][1]+") ");
-        System.out.println("");
-
 
         ValueAnimator va = ValueAnimator.ofFloat((float)0, (float)(chueck[now_perm] + 0.1));
-        int mDuration = chueck[now_perm]*1000;
+        int mDuration = chueck[now_perm]*500;
         va.setDuration(mDuration);
         va.addUpdateListener(new ValueAnimator.AnimatorUpdateListener(){
             public void onAnimationUpdate(ValueAnimator animation){

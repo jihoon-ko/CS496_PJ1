@@ -3,6 +3,8 @@ package cs496.app.first.cs496_first;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -47,14 +49,13 @@ public class B extends Fragment {
             R.drawable.style_2_1, R.drawable.style_2_2,  R.drawable.style_2_3,
             R.drawable.style_2_4, R.drawable.style_2_5,  R.drawable.style_2_6,
             R.drawable.style_2_7, R.drawable.style_2_8,  R.drawable.style_2_9,
-            R.drawable.style_3_1, R.drawable.style_3_2};
-/*  R.drawable.style_3_3,
+            R.drawable.style_3_1, R.drawable.style_3_2, R.drawable.style_3_3,
             R.drawable.style_3_4, R.drawable.style_3_5,  R.drawable.style_3_6,
             R.drawable.style_3_7, R.drawable.style_3_8,  R.drawable.style_3_9,
             R.drawable.style_4_1, R.drawable.style_4_2,  R.drawable.style_4_3,
             R.drawable.style_4_4, R.drawable.style_4_5,  R.drawable.style_4_6,
             R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
-    };*/
+    };
     GridView gridView;
     SeekBar seekBar;
     DisplayMetrics dm;
@@ -188,6 +189,17 @@ public class B extends Fragment {
         public long getItemId(int position){
             return position;
         }
+        public Bitmap getBitmap(int position){
+            int realwidth = dm.widthPixels;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+            options.inSampleSize = Math.max(1, imageWidth * 2 / (realwidth / one_row / 5));
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+        }
         public View getView(int position, View convertView, ViewGroup parent){
             ImageView imageView;
             int width = dm.widthPixels;
@@ -202,7 +214,7 @@ public class B extends Fragment {
                 imageView.setScaleType(ImageView.ScaleType.FIT_XY);
                 imageView.setPadding(10, 10, 10, 10);
             }
-            imageView.setImageResource(img[position]);
+            imageView.setImageBitmap(getBitmap(position));
             return imageView;
         }
     };
