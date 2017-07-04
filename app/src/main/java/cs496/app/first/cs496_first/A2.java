@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.SimpleAdapter;
 import android.widget.TextView;
@@ -187,6 +188,9 @@ public class A2 extends Fragment {
         // Inflate the layout for this fragment
         View v = inflater.inflate(R.layout.fragment_a2, container, false);
         mResult = (ListView)v.findViewById(R.id.result1);
+        final EditText searchtext = (EditText)v.findViewById(R.id.searchbar);
+        Button searchbutton = (Button)v.findViewById(R.id.searchbtn);
+        Button resetbutton = (Button)v.findViewById(R.id.resetbtn);
         if(flag2 == 0)
         {
             Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList);
@@ -197,6 +201,40 @@ public class A2 extends Fragment {
             tryOutContact();
             flag2 = 0;
         }
+        searchbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                boolean searching = false;
+                ArrayList<Items> sPhoneList1 = new ArrayList<Items>();
+                for(int i = 0; i<sPhoneList.size();i++)
+                {
+                    if(sPhoneList.get(i).name.equals(searchtext.getText().toString()))
+                    {
+                        Items searched = new Items(sPhoneList.get(i).name, sPhoneList.get(i).phonenum);
+                        searching = true;
+                        sPhoneList1.add(searched);
+                    }
+                    else
+                    {
+                        continue;
+                    }
+                }
+                if(!searching)
+                {
+                    sPhoneList1 = new ArrayList<Items>();
+                }
+                Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList1);
+                mResult.setAdapter(Adapter);
+            }
+        });
+
+        resetbutton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList);
+                mResult.setAdapter(Adapter);
+            }
+        });
         return v;
     }
 

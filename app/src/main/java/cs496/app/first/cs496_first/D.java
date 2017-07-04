@@ -153,7 +153,7 @@ public class D extends Fragment {
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    int[][] map = new int[52][52];
+    int[][] map = new int[32][32];
     int[] flag = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -200,15 +200,44 @@ public class D extends Fragment {
     void mapgenerator()
     {
         Random random = new Random();
-        for(int i = 0; i < 400; i++)
+        for(int i = 0; i < 144; i++)
         {
-            map[random.nextInt(50) + 1][random.nextInt(50) + 1] = 50;
+            map[random.nextInt(30) + 1][random.nextInt(30) + 1] = 50;
         }
-        for(int i = 0; i < 100; i++)
+        for(int i = 0; i < 36; i++)
         {
-            map[random.nextInt(50) + 1][random.nextInt(50) + 1] = 70;
+            map[random.nextInt(30) + 1][random.nextInt(30) + 1] = 70;
         }
-        map[random.nextInt(50)+1][random.nextInt(50)+1] = 80;
+        map[random.nextInt(30)+1][random.nextInt(30)+1] = 80;
+    }
+
+    void reset()
+    {
+        champion.hp = 30;
+        champion.mp = 30;
+        champion.maxhp = 30;
+        champion.maxmp = 30;
+        champion.level = 1;
+        champion.exp = 0;
+        champion.atk = 10;
+        champion.def = 10;
+        champion.spe = 20;
+        champion.x = 1;
+        champion.y = 1;
+        champion.itemv = new Item[100];
+        champion.itemv[1] = new Item("약초", 3);
+        champion.itemv[2] = new Item("마나포션", 3);
+        champion.itemposition = 1;
+        champion.skillposition = 1;
+        for(int i = 1;i<31;i++)
+        {
+            for(int j = 1;j<31;j++)
+            {
+                map[i][j] = 0;
+            }
+        }
+        monsterreset();
+        mapgenerator();
     }
 
     @Override
@@ -218,12 +247,12 @@ public class D extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_d, container, false);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
         map[champion.x][champion.y] = 1;
-        for(int i=0; i<52; i++)
+        for(int i=0; i<32; i++)
         {
             map[i][0] = 99;
-            map[i][51] = 99;
+            map[i][31] = 99;
             map[0][i] = 99;
-            map[51][i] = 99;
+            map[31][i] = 99;
         }
         mapgenerator();
         textSetting(champion,flag,v);
@@ -256,6 +285,8 @@ public class D extends Fragment {
             textSetting11(champion,flag,v);
         else if(flag[11] == 1)
             textSetting12(champion,flag,v);
+        else if(flag[12] == 1)
+            textSetting13(champion,flag,v);
 
     }
 
@@ -733,11 +764,20 @@ public class D extends Fragment {
             }
             else
             {
-                script.setText("당신은 죽었습니다...\n다시 하려면 앱을 재시작하십시오.");
-                action1.setText("");
+                script.setText("당신은 죽었습니다...");
+                action1.setText("다시 하기");
                 action2.setText("");
                 action3.setText("");
                 action4.setText("");
+                button1.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v1) {
+                        flag[6] = 0;
+                        flag[0] = 1;
+                        reset();
+                        textSetting(champion,flag,v);
+                    }
+                });
             }
         }
     }
@@ -1254,6 +1294,7 @@ public class D extends Fragment {
     {
         goblin.hp = 50;
         ogre.hp = 100;
+        boss.hp = 700;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
