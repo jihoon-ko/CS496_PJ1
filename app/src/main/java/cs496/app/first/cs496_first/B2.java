@@ -1,12 +1,18 @@
 package cs496.app.first.cs496_first;
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +24,11 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 
 /**
@@ -40,27 +51,15 @@ public class B2 extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
-    private Integer[] img = {
-            R.drawable.style_1_1, R.drawable.style_1_2,  R.drawable.style_1_3,
-            R.drawable.style_1_4, R.drawable.style_1_5,  R.drawable.style_1_6,
-            R.drawable.style_1_7, R.drawable.style_1_8,  R.drawable.style_1_9,
-            R.drawable.style_2_1, R.drawable.style_2_2,  R.drawable.style_2_3,
-            R.drawable.style_2_4, R.drawable.style_2_5,  R.drawable.style_2_6,
-            R.drawable.style_2_7, R.drawable.style_2_8,  R.drawable.style_2_9,
-            R.drawable.style_3_1, R.drawable.style_3_2, R.drawable.style_3_3,
-            R.drawable.style_3_4, R.drawable.style_3_5,  R.drawable.style_3_6,
-            R.drawable.style_3_7, R.drawable.style_3_8,  R.drawable.style_3_9,
-            R.drawable.style_4_1, R.drawable.style_4_2,  R.drawable.style_4_3,
-            R.drawable.style_4_4, R.drawable.style_4_5,  R.drawable.style_4_6,
-            R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
-    };
     GridView gridView;
     SeekBar seekBar;
     DisplayMetrics dm;
     TextView szText;
     int one_row = 3;
+    boolean first_fetch = true;
     public B2() {
         // Required empty public constructor
+        first_fetch = true;
     }
 
     /**
@@ -90,6 +89,50 @@ public class B2 extends Fragment {
         }
     }
 
+    ArrayList<Uri> result = new ArrayList<Uri>();
+    ArrayList<Bitmap> thumbs = new ArrayList<Bitmap>();
+
+    void fetchAllImages(){
+        if (first_fetch){
+            first_fetch = false;
+        }else{
+            return;
+        }
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor imageCursor = getContext().getContentResolver().query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI, projection, null, null, null);
+        int dataColumnIndex = imageCursor.getColumnIndex(projection[0]);
+        System.out.println("imagecursor Count: " + imageCursor.getCount());
+        System.out.println("imagecursor Count: " + dataColumnIndex);
+        if(imageCursor == null) {
+        }else if(imageCursor.moveToFirst()){
+            do{
+                String filePath = imageCursor.getString(dataColumnIndex);
+                File saveFile = new File(filePath);
+                System.out.println(filePath);
+                Uri imageUri = Uri.fromFile(saveFile);
+                result.add(imageUri);
+                thumbs.add(null);
+            }while(imageCursor.moveToNext());
+        }
+        imageCursor.close();
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults){
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case 42: {
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    fetchAllImages();
+                } else {
+                    Toast.makeText(getActivity(), "Bye-bye!", Toast.LENGTH_LONG).show();
+                    getActivity().finish();
+                }
+                return;
+            }
+        }
+    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -104,7 +147,7 @@ public class B2 extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Intent intent = new Intent(getActivity(), ImageviewActivity.class);
-                intent.putExtra("imageSelected", img[position]);
+                intent.putExtra("imageUri", result.get(position));
                 startActivity(intent);
             }
         });
@@ -128,6 +171,16 @@ public class B2 extends Fragment {
 
             }
         });
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED){
+            if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(), Manifest.permission.READ_EXTERNAL_STORAGE)){
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 42);
+            }else{
+                ActivityCompat.requestPermissions(getActivity(), new String[]{Manifest.permission.READ_EXTERNAL_STORAGE}, 42);
+            }
+        }else{
+            fetchAllImages();
+        }
+        System.out.println(result.size());
         gridView.setAdapter(new B2.ImageAdapter(this.getContext()));
         return v;
     }
@@ -179,30 +232,38 @@ public class B2 extends Fragment {
             mContext = c;
         }
         public final int getCount(){
-            return img.length;
+            return result.size();
         }
         public Object getItem(int position){
-            return img[position];
+            return result.get(position);
         }
         public long getItemId(int position){
             return position;
         }
         public Bitmap getBitmap(int position){
-            int realwidth = dm.widthPixels;
+            Bitmap myThumbnail = thumbs.get(position);
+            if(myThumbnail != null) return myThumbnail;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
-            BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
-            int imageHeight = options.outHeight;
-            int imageWidth = options.outWidth;
-            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) * 2 / (realwidth / one_row / 5));
-            options.inJustDecodeBounds = false;
-            Bitmap original = BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
-            int width = original.getWidth();
-            int height = original.getHeight();
-            if(original.getWidth() > original.getHeight()){
-                return Bitmap.createBitmap(original, (width - height)/2, 0, height, height);
-            }else{
-                return Bitmap.createBitmap(original, 0, (height - width)/2, width, width);
+            try {
+                BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream((Uri) getItem(position)), null, options);
+                int imageHeight = options.outHeight;
+                int imageWidth = options.outWidth;
+                options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 200);
+                options.inJustDecodeBounds = false;
+                Bitmap original = BitmapFactory.decodeStream(mContext.getContentResolver().openInputStream((Uri) getItem(position)), null, options);
+                int width = original.getWidth();
+                int height = original.getHeight();
+                if(original.getWidth() > original.getHeight()){
+                    myThumbnail = Bitmap.createBitmap(original, (width - height)/2, 0, height, height);
+                }else{
+                    myThumbnail = Bitmap.createBitmap(original, 0, (height - width)/2, width, width);
+                }
+                thumbs.set(position, myThumbnail);
+                return myThumbnail;
+            }catch(Exception e){
+                e.printStackTrace();
+                return null;
             }
         }
         public View getView(int position, View convertView, ViewGroup parent){
@@ -215,7 +276,7 @@ public class B2 extends Fragment {
             }
             imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setPadding(10, 10, 10, 10);
+            imageView.setPadding(5, 5, 5, 5);
             imageView.setImageBitmap(getBitmap(position));
             return imageView;
         }

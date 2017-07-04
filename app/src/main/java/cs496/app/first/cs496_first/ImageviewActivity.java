@@ -2,6 +2,7 @@ package cs496.app.first.cs496_first;
 
 import android.content.Intent;
 import android.graphics.Color;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.WindowManager;
@@ -18,6 +19,11 @@ public class ImageviewActivity extends AppCompatActivity {
         Intent intent = getIntent();
         PhotoView photoView = (PhotoView) findViewById(R.id.detailPhotoview);
         photoView.setBackgroundColor(Color.BLACK);
-        photoView.setImageResource(intent.getIntExtra("imageSelected", R.drawable.style_1_1));
+        int imageId = intent.getIntExtra("imageSelected", R.drawable.images);
+        if(imageId == R.drawable.images){
+            Uri uri = intent.getParcelableExtra("imageUri");
+            photoView.setImageURI(uri);
+        }
+        else photoView.setImageResource(imageId);
     }
 }

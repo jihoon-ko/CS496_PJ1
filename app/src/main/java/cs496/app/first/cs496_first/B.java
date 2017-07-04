@@ -56,6 +56,12 @@ public class B extends Fragment {
             R.drawable.style_4_4, R.drawable.style_4_5,  R.drawable.style_4_6,
             R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
     };
+    private Bitmap[] thumbs = {
+            null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null,
+            null, null, null, null, null, null, null, null, null,
+    };
     GridView gridView;
     SeekBar seekBar;
     DisplayMetrics dm;
@@ -190,22 +196,24 @@ public class B extends Fragment {
             return position;
         }
         public Bitmap getBitmap(int position){
+            if(thumbs[position] != null) return thumbs[position];
             int realwidth = dm.widthPixels;
             BitmapFactory.Options options = new BitmapFactory.Options();
             options.inJustDecodeBounds = true;
             BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int imageHeight = options.outHeight;
             int imageWidth = options.outWidth;
-            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) * 2 / (realwidth / one_row / 5));
+            options.inSampleSize = Math.max(1, Math.min(imageWidth, imageHeight) / 200);
             options.inJustDecodeBounds = false;
             Bitmap original = BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
             int width = original.getWidth();
             int height = original.getHeight();
             if(original.getWidth() > original.getHeight()){
-                return Bitmap.createBitmap(original, (width - height)/2, 0, height, height);
+                thumbs[position] = Bitmap.createBitmap(original, (width - height)/2, 0, height, height);
             }else{
-                return Bitmap.createBitmap(original, 0, (height - width)/2, width, width);
+                thumbs[position] = Bitmap.createBitmap(original, 0, (height - width)/2, width, width);
             }
+            return thumbs[position];
         }
         public View getView(int position, View convertView, ViewGroup parent){
             ImageView imageView;
@@ -217,7 +225,7 @@ public class B extends Fragment {
             }
             imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
             imageView.setScaleType(ImageView.ScaleType.FIT_CENTER);
-            imageView.setPadding(10, 10, 10, 10);
+            imageView.setPadding(5, 5, 5, 5);
             imageView.setImageBitmap(getBitmap(position));
             return imageView;
         }

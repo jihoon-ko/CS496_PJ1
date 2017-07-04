@@ -28,8 +28,8 @@ public class MainActivity extends AppCompatActivity {
         mTabHost.setup(this, getSupportFragmentManager(), android.R.id.tabcontent);
         //mTabHost.addTab(mTabHost.newTabSpec("Tab1").setIndicator("A", null), A.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("Tab1").setIndicator("A", null), A2.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("B", null), B.class, null);
-        mTabHost.addTab(mTabHost.newTabSpec("Tab3").setIndicator("B_alpha", null), B2.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("Tab2").setIndicator("B1", null), B.class, null);
+        mTabHost.addTab(mTabHost.newTabSpec("Tab3").setIndicator("B2", null), B2.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("Tab4").setIndicator("C", null), C.class, null);
         mTabHost.addTab(mTabHost.newTabSpec("Tab5").setIndicator("D", null), D.class, null);
     }
