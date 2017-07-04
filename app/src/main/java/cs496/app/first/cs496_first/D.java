@@ -493,14 +493,30 @@ public class D extends Fragment {
                     @Override
                     public void onClick(View v1) {
                         champion.itemposition--;
-                        textSetting5(champion,flag,v);
+                        if(champion.itemv[champion.itemposition] != null)
+                        {
+                            textSetting5(champion,flag,v);
+                        }
+                        else
+                        {
+                            champion.itemposition++;
+                            textSetting5(champion,flag,v);
+                        }
                     }
                 });
                 button2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v1) {
                         champion.itemposition++;
-                        textSetting5(champion,flag,v);
+                        if(champion.itemv[champion.itemposition] != null)
+                        {
+                            textSetting5(champion,flag,v);
+                        }
+                        else
+                        {
+                            champion.itemposition--;
+                            textSetting5(champion,flag,v);
+                        }
                     }
                 });
                 button3.setOnClickListener(new View.OnClickListener() {
@@ -753,14 +769,30 @@ public class D extends Fragment {
                     @Override
                     public void onClick(View v1) {
                         champion.itemposition--;
-                        textSetting9(champion,flag,v);
+                        if(champion.itemv[champion.itemposition] != null)
+                        {
+                            textSetting9(champion,flag,v);
+                        }
+                        else
+                        {
+                            champion.itemposition++;
+                            textSetting9(champion,flag,v);
+                        }
                     }
                 });
                 button2.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View v1) {
                         champion.itemposition++;
-                        textSetting9(champion,flag,v);
+                        if(champion.itemv[champion.itemposition] != null)
+                        {
+                            textSetting9(champion,flag,v);
+                        }
+                        else
+                        {
+                            champion.itemposition--;
+                            textSetting9(champion,flag,v);
+                        }
                     }
                 });
                 button3.setOnClickListener(new View.OnClickListener() {
