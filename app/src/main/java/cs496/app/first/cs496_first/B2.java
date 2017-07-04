@@ -1,12 +1,23 @@
 package cs496.app.first.cs496_first;
 
 import android.content.Context;
+import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.ImageView;
+import android.widget.SeekBar;
+import android.widget.TextView;
 
 
 /**
@@ -29,6 +40,25 @@ public class B2 extends Fragment {
 
     private OnFragmentInteractionListener mListener;
 
+    private Integer[] img = {
+            R.drawable.style_1_1, R.drawable.style_1_2,  R.drawable.style_1_3,
+            R.drawable.style_1_4, R.drawable.style_1_5,  R.drawable.style_1_6,
+            R.drawable.style_1_7, R.drawable.style_1_8,  R.drawable.style_1_9,
+            R.drawable.style_2_1, R.drawable.style_2_2,  R.drawable.style_2_3,
+            R.drawable.style_2_4, R.drawable.style_2_5,  R.drawable.style_2_6,
+            R.drawable.style_2_7, R.drawable.style_2_8,  R.drawable.style_2_9,
+            R.drawable.style_3_1, R.drawable.style_3_2, R.drawable.style_3_3,
+            R.drawable.style_3_4, R.drawable.style_3_5,  R.drawable.style_3_6,
+            R.drawable.style_3_7, R.drawable.style_3_8,  R.drawable.style_3_9,
+            R.drawable.style_4_1, R.drawable.style_4_2,  R.drawable.style_4_3,
+            R.drawable.style_4_4, R.drawable.style_4_5,  R.drawable.style_4_6,
+            R.drawable.style_4_7, R.drawable.style_4_8,  R.drawable.style_4_9
+    };
+    GridView gridView;
+    SeekBar seekBar;
+    DisplayMetrics dm;
+    TextView szText;
+    int one_row = 3;
     public B2() {
         // Required empty public constructor
     }
@@ -64,7 +94,42 @@ public class B2 extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_b2, container, false);
+        View v = inflater.inflate(R.layout.fragment_b2, container, false);
+        gridView = (GridView) v.findViewById(R.id.gridview);
+        seekBar = (SeekBar) v.findViewById(R.id.seekbar);
+        szText = (TextView) v.findViewById(R.id.sztext);
+        dm = new DisplayMetrics();
+        ((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay().getMetrics(dm);
+        gridView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getActivity(), ImageviewActivity.class);
+                intent.putExtra("imageSelected", img[position]);
+                startActivity(intent);
+            }
+        });
+        seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                one_row = progress + 1;
+                gridView.setNumColumns(one_row);
+                gridView.invalidateViews();
+                gridView.postInvalidate();
+                szText.setText(String.valueOf(one_row));
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+        gridView.setAdapter(new B2.ImageAdapter(this.getContext()));
+        return v;
     }
 
     // TODO: Rename method, update argument and hook method into UI event
@@ -107,4 +172,45 @@ public class B2 extends Fragment {
         // TODO: Update argument type and name
         void onFragmentInteraction(Uri uri);
     }
+    public class ImageAdapter extends BaseAdapter {
+        private Context mContext;
+
+        public ImageAdapter(Context c) {
+            mContext = c;
+        }
+        public final int getCount(){
+            return img.length;
+        }
+        public Object getItem(int position){
+            return img[position];
+        }
+        public long getItemId(int position){
+            return position;
+        }
+        public Bitmap getBitmap(int position){
+            int realwidth = dm.widthPixels;
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true;
+            BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+            int imageHeight = options.outHeight;
+            int imageWidth = options.outWidth;
+            options.inSampleSize = Math.max(1, imageWidth * 2 / (realwidth / one_row / 5));
+            options.inJustDecodeBounds = false;
+            return BitmapFactory.decodeResource(getResources(), (int) getItem(position), options);
+        }
+        public View getView(int position, View convertView, ViewGroup parent){
+            ImageView imageView;
+            int width = dm.widthPixels;
+            if(convertView == null){
+                imageView = new ImageView(mContext);
+            }else{
+                imageView = (ImageView) convertView;
+            }
+            imageView.setLayoutParams(new GridView.LayoutParams(width/one_row, width/one_row));
+            imageView.setScaleType(ImageView.ScaleType.FIT_XY);
+            imageView.setPadding(10, 10, 10, 10);
+            imageView.setImageBitmap(getBitmap(position));
+            return imageView;
+        }
+    };
 }
