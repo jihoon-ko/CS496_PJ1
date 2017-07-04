@@ -24,9 +24,9 @@
     <string name="mp">MP</string>
     <string name="lvl">Level</string>
     <string name="exp">경험치</string>
-    <string name="str">힘</string>
-    <string name="dex">민첩</string>
-    <string name="inte">지능</string>
+    <string name="atk">공격력</string>
+    <string name="def">방어력</string>
+    <string name="spe">주문력</string>
 
     <string name="move">이동</string>
     <string name="state">현재 상태 확인</string>
