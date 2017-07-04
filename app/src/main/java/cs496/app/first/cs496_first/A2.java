@@ -204,24 +204,18 @@ public class A2 extends Fragment {
         searchbutton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                boolean searching = false;
                 ArrayList<Items> sPhoneList1 = new ArrayList<Items>();
                 for(int i = 0; i<sPhoneList.size();i++)
                 {
                     if(sPhoneList.get(i).name.contains(searchtext.getText().toString()))
                     {
                         Items searched = new Items(sPhoneList.get(i).name, sPhoneList.get(i).phonenum);
-                        searching = true;
                         sPhoneList1.add(searched);
                     }
                     else
                     {
                         continue;
                     }
-                }
-                if(!searching)
-                {
-                    sPhoneList1 = new ArrayList<Items>();
                 }
                 Adapter = new ItemsAdapter(getActivity(), R.layout.fragment_a2_item ,sPhoneList1);
                 mResult.setAdapter(Adapter);
