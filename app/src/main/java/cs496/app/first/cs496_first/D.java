@@ -14,6 +14,7 @@ import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import java.util.Arrays;
+import java.util.Random;
 
 
 /**
@@ -76,8 +77,8 @@ class Champion
         atk = 10;
         def = 10;
         spe = 20;
-        x = 50;
-        y = 50;
+        x = 1;
+        y = 1;
         itemv = new Item[100];
         itemv[1] = new Item("약초", 3);
         itemv[2] = new Item("마나포션", 3);
@@ -134,12 +135,25 @@ class Ogre extends Monster
     }
 }
 
+class Boss extends Monster
+{
+    Boss()
+    {
+        name = "마계의 제왕";
+        hp = 700;
+        mp = 0;
+        atk = 100;
+        def = 30;
+        exp = 60000;
+    }
+}
+
 public class D extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
     private static final String ARG_PARAM1 = "param1";
     private static final String ARG_PARAM2 = "param2";
-    int[][] map = new int[102][102];
+    int[][] map = new int[52][52];
     int[] flag = {1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
     // TODO: Rename and change types of parameters
     private String mParam1;
@@ -181,6 +195,21 @@ public class D extends Fragment {
     final Champion champion = new Champion();
     final Goblin goblin = new Goblin();
     final Ogre ogre = new Ogre();
+    final Boss boss = new Boss();
+
+    void mapgenerator()
+    {
+        Random random = new Random();
+        for(int i = 0; i < 400; i++)
+        {
+            map[random.nextInt(50) + 1][random.nextInt(50) + 1] = 50;
+        }
+        for(int i = 0; i < 100; i++)
+        {
+            map[random.nextInt(50) + 1][random.nextInt(50) + 1] = 70;
+        }
+        map[random.nextInt(50)+1][random.nextInt(50)+1] = 80;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -189,36 +218,14 @@ public class D extends Fragment {
         final View v = inflater.inflate(R.layout.fragment_d, container, false);
         getActivity().setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER_PORTRAIT);
         map[champion.x][champion.y] = 1;
-        for(int i=0; i<102; i++)
+        for(int i=0; i<52; i++)
         {
             map[i][0] = 99;
-            map[i][101] = 99;
+            map[i][51] = 99;
             map[0][i] = 99;
-            map[0][101] = 99;
+            map[51][i] = 99;
         }
-        map[12][34] = 50;
-        map[56][78] = 50;
-        map[94][15] = 50;
-        map[38][72] = 50;
-        map[93][76] = 50;
-        map[81][51] = 50;
-        map[97][82] = 50;
-        map[33][66] = 50;
-        map[50][51] = 50;
-        map[51][50] = 50;
-        map[52][50] = 50;
-        map[50][52] = 50;
-        map[48][50] = 50;
-        map[50][48] = 50;
-        map[50][49] = 50;
-        map[49][50] = 50;
-        map[22][11] = 50;
-        map[99][88] = 70;
-        map[26][94] = 70;
-        map[87][62] = 70;
-        map[55][55] = 70;
-        map[44][44] = 70;
-
+        mapgenerator();
         textSetting(champion,flag,v);
         return v;
     }
@@ -678,6 +685,10 @@ public class D extends Fragment {
                 {
                     monster = ogre;
                 }
+                else if(map[champion.x][champion.y] == 81)
+                {
+                    monster = boss;
+                }
                 tel = monster.name + getString(R.string.encounter) + "\n" +
                         getString(R.string.whatwillyoudo);
                 script.setText(tel);
@@ -755,6 +766,11 @@ public class D extends Fragment {
             {
                 monster = ogre;
             }
+            else if(map[champion.x][champion.y] == 81)
+            {
+                monster = boss;
+            }
+
 
 
             if(champion.atk - monster.def > 0)
@@ -822,6 +838,21 @@ public class D extends Fragment {
                                 flag[7] = 0;
                                 flag[10] = 1;
                                 textSetting11(champion,flag,v);
+                            }
+                        }
+                        else if(map[champion.x][champion.y] == 81)
+                        {
+                            if(boss.hp > 0)
+                            {
+                                flag[6] = 1;
+                                flag[7] = 0;
+                                textSetting7(champion, flag, v);
+                            }
+                            else
+                            {
+                                flag[7] = 0;
+                                flag[12] = 1;
+                                textSetting13(champion,flag,v);
                             }
                         }
                     }
@@ -1061,17 +1092,21 @@ public class D extends Fragment {
                     }
                 }
             }
+
             if(champion.exp >= (100 + (champion.level - 1) * (champion.level - 1) * 50))
             {
-                champion.level++;
-                champion.hp += 10;
-                champion.maxhp += 10;
-                champion.mp += 15;
-                champion.maxmp += 15;
-                champion.atk += 5;
-                champion.def += 5;
-                champion.spe += 10;
-                champion.exp -= 100;
+                while(champion.exp >= (100 + (champion.level - 1) * (champion.level - 1) * 50))
+                {
+                    champion.level++;
+                    champion.hp += 10;
+                    champion.maxhp += 10;
+                    champion.mp += 15;
+                    champion.maxmp += 15;
+                    champion.atk += 5;
+                    champion.def += 5;
+                    champion.spe += 10;
+                    champion.exp -= (100 + (champion.level - 1) * (champion.level - 1) * 50);
+                }
             }
             monsterreset();
             map[champion.x][champion.y] = 1;
@@ -1190,6 +1225,28 @@ public class D extends Fragment {
                     }
                 }
             });
+        }
+    }
+
+    public void textSetting13(final Champion champion, final int[] flag, final View v) {
+        TextView script = (TextView) v.findViewById(R.id.states);
+        TextView action1 = (TextView) v.findViewById(R.id.action1);
+        TextView action2 = (TextView) v.findViewById(R.id.action2);
+        TextView action3 = (TextView) v.findViewById(R.id.action3);
+        TextView action4 = (TextView) v.findViewById(R.id.action4);
+
+        Button button1 = (Button) v.findViewById(R.id.btn1);
+        Button button2 = (Button) v.findViewById(R.id.btn2);
+        Button button3 = (Button) v.findViewById(R.id.btn3);
+        Button button4 = (Button) v.findViewById(R.id.btn4);
+
+        if(flag[12] == 1)
+        {
+            script.setText("축하합니다! 던전을 클리어하셨습니다!");
+            action1.setText("");
+            action2.setText("");
+            action3.setText("");
+            action4.setText("");
         }
     }
 
