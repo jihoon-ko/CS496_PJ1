@@ -208,7 +208,7 @@ public class A2 extends Fragment {
                 ArrayList<Items> sPhoneList1 = new ArrayList<Items>();
                 for(int i = 0; i<sPhoneList.size();i++)
                 {
-                    if(sPhoneList.get(i).name.equals(searchtext.getText().toString()))
+                    if(sPhoneList.get(i).name.contains(searchtext.getText().toString()))
                     {
                         Items searched = new Items(sPhoneList.get(i).name, sPhoneList.get(i).phonenum);
                         searching = true;
