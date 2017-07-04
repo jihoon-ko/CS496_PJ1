@@ -17,6 +17,7 @@
     <string name="direction">어느 방향으로 가겠습니까?</string>
     <string name="encounter">를(을) 마주쳤습니다.</string>
     <string name="goblin">고블린</string>
+    <string name="ogre">오우거</string>
     <string name="character">캐릭터</string>
 
     <string name="stat">현재 상태</string>
